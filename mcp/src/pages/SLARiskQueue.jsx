@@ -112,7 +112,7 @@ export default function SLARiskQueue() {
             {filtered.map((item, i) => (
               <tr key={i}>
                 <td className="sla-td-type"><span className="sla-type-badge">{item.type}</span></td>
-                <td><Link to="#" className="sla-id-link">{item.id}</Link></td>
+                <td><Link to="/cases" className="sla-id-link">{item.id}</Link></td>
                 <td className="sla-td-customer">{item.customer}</td>
                 <td className={`sla-td-owner ${item.owner === 'Unassigned' ? 'sla-unassigned' : ''}`}>{item.owner}</td>
                 <td className="sla-td-due">{item.due}</td>

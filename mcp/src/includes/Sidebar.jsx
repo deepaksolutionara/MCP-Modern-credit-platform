@@ -21,7 +21,10 @@ const navGroups = [
       { Icon: Users,           label: 'Customers',   to: '/customers' },
       { Icon: Briefcase,       label: 'Cases',       to: '/cases' },
       { Icon: Archive,         label: 'Held Orders', to: '/held-orders' },
-      { Icon: AlertTriangle, label: 'SLA Risk Queue', to: '/sla-risk' },
+      { Icon: AlertTriangle, label: 'SLA Risk Queue',  to: '/sla-risk'      },
+      { Icon: RefreshCw,     label: 'Auto-Released',        to: '/auto-released'   },
+      { Icon: RefreshCw,     label: 'Re-Decisioning Events', to: '/re-decisioning'  },
+      { Icon: FileText,      label: 'Credit Hold Report',    to: '/credit-hold-report' },
     ],
     routed: true,
   },
@@ -40,8 +43,7 @@ const navGroups = [
   {
     label: 'Lifecycle',
     items: [
-      { Icon: RefreshCw, label: 'Re-Decisioning'     },
-      { Icon: Eye,       label: 'Prebook Visibility' },
+      { Icon: Eye, label: 'Prebook Visibility' },
     ],
   },
   {

@@ -16,6 +16,10 @@ import Scorecards from './pages/Scorecards';
 import Customers from './pages/Customers';
 import CustomerDetail from './pages/CustomerDetail';
 import SLARiskQueue from './pages/SLARiskQueue';
+import AutoReleased from './pages/AutoReleased';
+import CaseDetail from './pages/CaseDetail';
+import ReDecisioningEvents from './pages/ReDecisioningEvents';
+import CreditHoldReport from './pages/CreditHoldReport';
 
 import './App.css';
 
@@ -32,6 +36,7 @@ function App() {
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/queues" element={<WorkQueue />} />
                 <Route path="/cases" element={<Cases />} />
+                <Route path="/cases/:caseId" element={<CaseDetail />} />
                 <Route path="/held-orders" element={<HeldOrders />} />
                 <Route path="/next-best-action" element={<NextBestAction />} />
                 <Route path="/release-unlock" element={<ReleaseUnlock />} />
@@ -43,6 +48,9 @@ function App() {
                 <Route path="/customers" element={<Customers />} />
                 <Route path="/customers/:accountNo" element={<CustomerDetail />} />
                 <Route path="/sla-risk" element={<SLARiskQueue />} />
+                <Route path="/auto-released" element={<AutoReleased />} />
+                <Route path="/re-decisioning" element={<ReDecisioningEvents />} />
+                <Route path="/credit-hold-report" element={<CreditHoldReport />} />
               </Routes>
             </main>
           </div>
