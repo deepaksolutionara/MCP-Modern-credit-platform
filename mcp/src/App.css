@@ -1640,6 +1640,285 @@
 }
 
 /* ============================================================
+   RE-DECISIONING CONSOLE PAGE  (rdc-*)
+   ============================================================ */
+
+/* Run button */
+.rdc-run-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 12px;
+  font-size: 11.5px; font-weight: 600; color: #fff;
+  background: #3b82f6; border: none; border-radius: 7px;
+  cursor: pointer; white-space: nowrap;
+}
+.rdc-run-btn:hover { background: #2563eb; }
+
+/* KPI row */
+.rdc-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.rdc-kpi-card {
+  padding: 10px 14px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+.rdc-kpi-label { font-size: 10px; color: #64748b; margin-bottom: 4px; }
+.rdc-kpi-value { font-size: 22px; font-weight: 700; line-height: 1; }
+.rdc-kpi-black { color: #0f172a; }
+.rdc-kpi-red   { color: #ef4444; }
+.rdc-kpi-amber { color: #f59e0b; }
+.rdc-kpi-green { color: #22c55e; }
+
+/* Logic & Impact card */
+.rdc-logic-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 11px 14px;
+  margin-bottom: 8px;
+}
+.rdc-logic-title {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11.5px; font-weight: 600; color: #0f172a;
+  margin-bottom: 5px;
+}
+.rdc-logic-body {
+  font-size: 10.5px; color: #475569;
+  line-height: 1.5; margin: 0 0 8px;
+}
+.rdc-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 7px;
+}
+.rdc-meta-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ebecf0;
+  border-radius: 8px;
+  padding: 6px 12px;
+  gap: 12px;
+}
+.rdc-meta-key { font-size: 10.5px; color: #64748b; }
+.rdc-meta-val { font-size: 10.5px; font-weight: 600; color: #0f172a; }
+.rdc-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+.rdc-tag {
+  font-size: 10px; font-weight: 500;
+  padding: 2px 8px;
+  background: #f1f5f9; color: #475569;
+  border: 1px solid #e2e8f0; border-radius: 5px;
+}
+
+/* Tabs */
+.rdc-tabs {
+  display: flex;
+  border-bottom: 2px solid #e5e7eb;
+  margin-bottom: 7px;
+}
+.rdc-tab {
+  padding: 6px 14px;
+  font-size: 11.5px; font-weight: 500; color: #64748b;
+  background: none; border: none; cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+.rdc-tab:hover { color: #0f172a; }
+.rdc-tab-active { color: #3b82f6; border-bottom-color: #3b82f6; font-weight: 600; }
+
+/* Filter pills */
+.rdc-filters {
+  display: flex; flex-wrap: wrap; gap: 4px;
+  margin-bottom: 8px;
+}
+.rdc-filter-pill {
+  padding: 3px 10px;
+  font-size: 10.5px; font-weight: 500;
+  background: #fff; color: #475569;
+  border: 1px solid #e2e8f0; border-radius: 999px;
+  cursor: pointer;
+}
+.rdc-filter-pill:hover { border-color: #cbd5e1; }
+.rdc-filter-active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+
+/* Table */
+.rdc-table-wrap {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.rdc-table { width: 100%; border-collapse: collapse; }
+.rdc-th {
+  padding: 6px 10px;
+  font-size: 10px; font-weight: 500; color: #64748b;
+  text-align: left; border-bottom: 1px solid #e5e7eb;
+  background: #fff;
+}
+.rdc-tr { border-bottom: 1px solid #f1f5f9; }
+.rdc-tr:last-child { border-bottom: none; }
+.rdc-tr:hover { background: #f8fafc; }
+.rdc-td { padding: 6px 10px; vertical-align: middle; font-size: 10.5px; color: #0f172a; }
+.rdc-td-event   { font-size: 10px; color: #64748b; font-weight: 400; white-space: nowrap; }
+.rdc-td-trigger { font-size: 10.5px; color: #374151; }
+.rdc-td-when    { font-size: 10px; color: #94a3b8; white-space: nowrap; }
+
+.rdc-order-id       { font-size: 10.5px; font-weight: 500; color: #3b82f6; }
+.rdc-order-customer { font-size: 9.5px; color: #6b7280; margin-top: 1px; }
+
+/* Stage pills */
+.rdc-stage-pill { font-size: 9px; font-weight: 600; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+.rdc-stage-pickpack  { background: #f59f0a; color: #000; }
+.rdc-stage-allocated { background: #f59f0a; color: #000; }
+.rdc-stage-scheduled { background: #2662d9; color: #fff; }
+.rdc-stage-prebooked { background: #2662d9; color: #fff; }
+.rdc-stage-submitted { background: #f1f5f9; color: #000; border: 1px solid #e2e8f0; }
+
+/* Outcome pills */
+.rdc-outcome-row { display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; }
+.rdc-outcome-pill { font-size: 9.5px; font-weight: 600; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.rdc-outcome-green { background: #21c45d; color: #000; }
+.rdc-outcome-red   { background: #dc2828; color: #000; }
+.rdc-outcome-amber { background: #f59f0a; color: #000; }
+.rdc-arrow { font-size: 11px; color: #9ca3af; }
+
+/* Exposure delta */
+.rdc-delta-green { font-size: 10.5px; font-weight: 600; color: #21c45d; }
+.rdc-delta-red   { font-size: 10.5px; font-weight: 600; color: #dc2828; }
+.rdc-delta-gray  { font-size: 10.5px; color: #374151; }
+
+/* JDE badges */
+.rdc-jde-badge { font-size: 9.5px; font-weight: 600; padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+.rdc-jde-green { background: #21c45d; color: #000; }
+.rdc-jde-red   { background: #dc2828; color: #000; }
+.rdc-jde-plain { font-size: 10px; color: #64748b; }
+
+/* Empty + placeholder */
+.rdc-empty       { padding: 16px; text-align: center; font-size: 11px; color: #94a3b8; }
+.rdc-placeholder { padding: 32px; text-align: center; }
+.rdc-placeholder-text { font-size: 12px; color: #94a3b8; }
+
+/* ============================================================
+   RE-DECISIONING LIFECYCLE PAGE  (rdl-*) — old, kept for reference
+   ============================================================ */
+
+.rdl-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rdl-row-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.rdl-row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.rdl-row-header:hover { background: #f8fafc; }
+
+.rdl-row-left  { display: flex; align-items: center; gap: 10px; }
+.rdl-row-right { display: flex; align-items: center; gap: 10px; }
+
+.rdl-order-id {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #94a3b8;
+  letter-spacing: 0.3px;
+}
+
+.rdl-customer {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.rdl-account { font-size: 10.5px; color: #94a3b8; }
+
+.rdl-outcome-pill {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.rdl-chevron { color: #94a3b8; }
+
+/* Timeline */
+.rdl-timeline {
+  display: flex;
+  align-items: flex-start;
+  padding: 10px 16px 14px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.rdl-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+  text-align: center;
+}
+
+.rdl-connector {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 100%;
+  height: 1.5px;
+  background: #e2e8f0;
+  z-index: 0;
+}
+
+.rdl-dot {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1.5px #e2e8f0;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  margin-bottom: 6px;
+}
+
+.rdl-step-label {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.3;
+  padding: 0 4px;
+}
+
+.rdl-step-when {
+  font-size: 9px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.rdl-step-detail {
+  font-size: 9px;
+  color: #64748b;
+  margin-top: 3px;
+  padding: 0 4px;
+  line-height: 1.3;
+}
+
+/* ============================================================
    SIMULATION STUDIO PAGE
    ============================================================ */
 
@@ -4375,4 +4654,61 @@
 
 /* chr-* extra column helpers */
 .chr-td-doctype { text-align: center; }
+
+/* ── RDC JDE tab ─────────────────────────────────────────────────────────── */
+
+/* Hold code reference card */
+.rdc-jde-ref-card {
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;
+  padding: 12px 14px; margin-bottom: 12px;
+}
+.rdc-jde-ref-title {
+  font-size: 11px; font-weight: 700; color: #334155;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+.rdc-jde-ref-grid {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.rdc-jde-code-card {
+  display: flex; flex-direction: column; gap: 2px;
+  background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;
+  padding: 8px 12px; min-width: 120px; flex: 1;
+}
+.rdc-jde-code-badge {
+  display: inline-block;
+  background: #1e293b; color: #fff;
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0.5px;
+  border-radius: 4px; padding: 2px 7px;
+  width: fit-content;
+}
+.rdc-jde-code-name {
+  font-size: 10.5px; font-weight: 600; color: #111827; margin-top: 4px;
+}
+.rdc-jde-code-cat {
+  font-size: 9.5px; color: #2662d9; font-weight: 500;
+}
+
+/* Action pills */
+.rdc-action-pill {
+  display: inline-block;
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0.3px;
+  border-radius: 999px; padding: 2px 9px;
+  white-space: nowrap;
+}
+.rdc-action-released { background: #dcfce7; color: #15803d; }
+.rdc-action-applied  { background: #fee2e2; color: #dc2828; }
+.rdc-action-sync     { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+.rdc-action-updated  { background: #fef9c3; color: #854d0e; border: 1px solid #fde68a; }
+
+/* JDE log table column helpers */
+.rdc-jde-holdcode {
+  font-size: 11px; font-weight: 700; color: #334155; text-align: center;
+}
+.rdc-jde-actor {
+  font-size: 10.5px; color: #475569;
+}
+.rdc-jde-status {
+  font-size: 10.5px; font-weight: 600; color: #15803d;
+}
 .chr-td-amount  { text-align: right; }
