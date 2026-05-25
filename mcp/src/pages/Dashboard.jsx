@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import '../App.css';
+import PageHeader from '../common/PageHeader';
 import {
   Briefcase, Package, Clock, AlertTriangle, CheckCircle2,
   ArrowUpRight, RefreshCw, ShieldAlert,
@@ -90,17 +91,11 @@ function Dashboard() {
        <Announcement/>
       )}
 
-      {/* Header */}
-      <div className="dash-header">
-        <div>
-          <div className="dash-title">Control Tower</div>
-          <div className="dash-sub">Operational visibility for credit decisioning, SLA, escalation, and release orchestration</div>
-        </div>
-        <div className="live-badge">
-          <Activity size={12} />
-          Live
-        </div>
-      </div>
+      <PageHeader
+        title="Control Tower"
+        subtitle="Operational visibility for credit decisioning, SLA, escalation, and release orchestration"
+        actions={<div className="live-badge"><Activity size={12} /> Live</div>}
+      />
 
       {/* KPI grid — 3 columns × 3 rows, all uniform */}
       <div className="kpi-grid">

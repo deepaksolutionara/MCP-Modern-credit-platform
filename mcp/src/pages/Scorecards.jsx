@@ -1,5 +1,6 @@
 import React from 'react';
 import { BarChart2, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import PageHeader from '../common/PageHeader';
 import '../App.css';
 
 // ── Scorecard sections ────────────────────────────────────────────────────────
@@ -94,16 +95,11 @@ export default function Scorecards() {
   return (
     <div className="dashboard">
 
-      {/* Header */}
-      <div className="sco-page-header">
-        <BarChart2 size={26} className="sco-page-icon" />
-        <div>
-          <div className="sco-page-title">Operations Scorecards</div>
-          <div className="sco-page-sub">
-            Embedded management visibility across collector productivity, dispute cycle time, PTP outcomes, auto-release, recovery, held-order revenue, and rule changes.
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon={<BarChart2 size={20} color="#3b82f6" />}
+        title="Operations Scorecards"
+        subtitle="Embedded management visibility across collector productivity, dispute cycle time, PTP outcomes, auto-release, recovery, held-order revenue, and rule changes."
+      />
 
       {/* Sections */}
       {sections.map(section => (

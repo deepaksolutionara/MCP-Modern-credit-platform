@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import '../App.css';
 import { FlaskConical } from 'lucide-react';
+import PageHeader from '../common/PageHeader';
 
 // ── Dealer baseline data ──────────────────────────────────────────────────────
 
@@ -379,16 +380,11 @@ export default function SimulationStudio() {
   return (
     <div className="dashboard">
 
-      {/* Header */}
-      <div className="sim-page-header">
-        <FlaskConical size={28} className="sim-page-icon" />
-        <div>
-          <div className="sim-page-title">Simulation &amp; What-If Studio</div>
-          <div className="sim-page-sub">
-            Model the impact of payments, dispute resolution, return-confidence changes, and policy changes before acting.
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon={<FlaskConical size={20} color="#3b82f6" />}
+        title="Simulation & What-If Studio"
+        subtitle="Model the impact of payments, dispute resolution, return-confidence changes, and policy changes before acting."
+      />
 
       {/* Tabs */}
       <div className="sim-tabbar">

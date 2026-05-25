@@ -8,6 +8,7 @@ import Cases from './pages/Cases';
 import HeldOrders from './pages/HeldOrders';
 import NextBestAction from './pages/NextBestAction';
 import ReleaseUnlock from './pages/ReleaseUnlock';
+import ReleaseUnlockDetail from './pages/ReleaseUnlockDetail';
 import SimulationStudio from './pages/SimulationStudio';
 import Communications from './pages/Communications';
 import CommunicationModule from './pages/CommunicationModule';
@@ -40,6 +41,7 @@ function App() {
                 <Route path="/held-orders" element={<HeldOrders />} />
                 <Route path="/next-best-action" element={<NextBestAction />} />
                 <Route path="/release-unlock" element={<ReleaseUnlock />} />
+                <Route path="/release-unlock/:orderId" element={<ReleaseUnlockDetail />} />
                 <Route path="/simulation-studio" element={<SimulationStudio />} />
                 <Route path="/communications" element={<Communications />} />
                 <Route path="/communication-module" element={<CommunicationModule />} />

@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Package, Download } from 'lucide-react';
+import PageHeader from '../common/PageHeader';
 import { Link, useSearchParams } from 'react-router-dom';
 import Announcement from '../common/Announcement';
 import '../App.css';
@@ -176,25 +177,12 @@ export default function HeldOrders() {
   return (
     <div className="dashboard">
 
-      {/* Header */}
-      <div className="ho-page-header">
-        <div className="ho-header-left">
-          <div className="wq-header-icon">
-            <Package size={20} color="#3b82f6" />
-          </div>
-          <div>
-            <div className="dash-title">Held Orders</div>
-            <div className="dash-sub">
-              Prioritized held-order queue with sales rep, document type, payment terms, and lifecycle status.
-              Tooltip-equivalent context: tile drilldowns and the queue both show the same dataset.
-            </div>
-          </div>
-        </div>
-      </div>
-      <button className="ho-report-btn">
-        <Download size={14} />
-        Credit Hold Report
-      </button>
+      <PageHeader
+        icon={<Package size={20} color="#3b82f6" />}
+        title="Held Orders"
+        subtitle="Prioritized held-order queue with sales rep, document type, payment terms, and lifecycle status."
+        actions={<button className="ho-report-btn"><Download size={14} /> Credit Hold Report</button>}
+      />
 
       {/* Filter tabs */}
       <div className="ho-filter-tabs">

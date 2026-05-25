@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { RefreshCw } from 'lucide-react';
+import PageHeader from '../common/PageHeader';
 import '../App.css';
 
 // ── Data ──────────────────────────────────────────────────────────────────────
@@ -68,20 +69,11 @@ export default function ReDecisioningEvents() {
   return (
     <div className="dashboard">
 
-      {/* Header */}
-      <div className="rde-page-header">
-        <div className="rde-header-icon">
-          <RefreshCw size={18} color="#3b82f6" />
-        </div>
-        <div>
-          <div className="rde-page-title">Re-Decisioning Events</div>
-          <div className="rde-page-sub">
-            Each row is a credit re-evaluation triggered by a payment, dispute, return,
-            modification, or scheduled review. "Resulting Holds" counts events whose outcome
-            was a new or maintained credit hold.
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon={<RefreshCw size={18} color="#3b82f6" />}
+        title="Re-Decisioning Events"
+        subtitle='Each row is a credit re-evaluation triggered by a payment, dispute, return, modification, or scheduled review. "Resulting Holds" counts events whose outcome was a new or maintained credit hold.'
+      />
 
       {/* KPI row — connected cards */}
       <div className="rde-kpi-row">

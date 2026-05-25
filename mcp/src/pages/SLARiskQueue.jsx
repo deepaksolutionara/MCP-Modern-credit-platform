@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Timer } from 'lucide-react';
+import PageHeader from '../common/PageHeader';
 import { Link } from 'react-router-dom';
 import '../App.css';
 
@@ -64,19 +65,12 @@ export default function SLARiskQueue() {
   return (
     <div className="dashboard">
 
-      {/* Header */}
-      <div className="sla-page-header">
-        <div className="sla-header-icon">
-          <Timer size={20} color="#f59e0b" />
-        </div>
-        <div>
-          <div className="dash-title">SLA Risk Queue</div>
-          <div className="dash-sub">
-            All operational objects (holds, disputes, collections, credit reviews, JDE exceptions) at or near SLA breach
-          </div>
-        </div>
-      </div>
-
+      <PageHeader
+        icon={<Timer size={20} color="#f59e0b" />}
+        iconBg="#fffbeb"
+        title="SLA Risk Queue"
+        subtitle="All operational objects (holds, disputes, collections, credit reviews, JDE exceptions) at or near SLA breach"
+      />
       {/* Filter tabs */}
       <div className="sla-filter-tabs">
         {filterTabs.map(tab => (

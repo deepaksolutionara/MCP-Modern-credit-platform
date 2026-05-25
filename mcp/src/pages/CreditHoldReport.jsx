@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { FileText, Download, Filter, Lock } from 'lucide-react';
 import '../App.css';
+import PageHeader from '../common/PageHeader';
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
@@ -109,29 +110,17 @@ export default function CreditHoldReport() {
   return (
     <div className="dashboard">
 
-      {/* Header */}
-      <div className="chr-page-header">
-        <div className="chr-header-left">
-          <div className="chr-header-icon">
-            <FileText size={20} color="#3b82f6" />
+      <PageHeader
+        icon={<FileText size={20} color="#3b82f6" />}
+        title="Credit Hold Report"
+        subtitle="Daily hold reporting — supports continuity with the legacy Excel report."
+        actions={
+          <div className="chr-export-btns">
+            <button className="chr-btn-csv"><FileText size={13} /> CSV</button>
+            <button className="chr-btn-xlsx"><Download size={13} /> XLSX</button>
           </div>
-          <div>
-            <div className="chr-page-title">Credit Hold Report</div>
-            <div className="chr-page-sub">
-              Daily hold reporting — supports continuity with the legacy Excel report.
-            </div>
-          </div>
-        </div>
-        <div className="chr-export-btns">
-          <button className="chr-btn-csv">
-            <FileText size={13} /> CSV
-          </button>
-          <button className="chr-btn-xlsx">
-            <Download size={13} /> XLSX
-          </button>
-        </div>
-      </div>
-
+        }
+      />
       {/* Metadata bar */}
       <div className="chr-meta-bar">
         <span className="chr-meta-item">Generated: {GENERATED}</span>

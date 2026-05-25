@@ -1,4 +1,50 @@
 /* ============================================================
+   SHARED PAGE HEADER  (page-header-*)
+   ============================================================ */
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.page-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-header-icon-box {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.page-header-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+  margin-bottom: 3px;
+}
+
+.page-header-sub {
+  font-size: 12.5px;
+  color: #64748b;
+  line-height: 1.5;
+  max-width: 720px;
+}
+
+.page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ============================================================
    LAYOUT
    ============================================================ */
 
@@ -316,7 +362,7 @@
    DASHBOARD PAGE
    ============================================================ */
 
-.dashboard { display: flex; flex-direction: column; gap: 20px; }
+.dashboard { display: flex; flex-direction: column; gap: 10px; }
 
 .dash-header {
   display: flex;
@@ -905,26 +951,32 @@
 /* Page header */
 .nba-page-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
+  margin-bottom: 4px;
 }
 
-.nba-page-icon {
-  color: #3b82f6;
+.nba-page-icon-box {
+  width: 38px; height: 38px;
+  background: #eff6ff;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
-  margin-top: 2px;
 }
+
+.nba-page-icon { color: #3b82f6; }
 
 .nba-page-title {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
   color: #0f172a;
   letter-spacing: -0.3px;
+  line-height: 1.2;
   margin-bottom: 3px;
 }
 
 .nba-page-sub {
-  font-size: 13px;
+  font-size: 12px;
   color: #64748b;
   line-height: 1.5;
 }
@@ -932,36 +984,46 @@
 /* Tab bar */
 .nba-tabbar {
   display: flex;
-  gap: 2px;
   border: 1px solid #e2e8f0;
-  border-radius: 6px;
+  border-radius: 8px;
+  background: #fff;
+  overflow: hidden;
+  width: fit-content;
 }
 
 .nba-tab {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 9px 18px;
-  font-size: 13px;
+  gap: 6px;
+  padding: 8px 15px;
+  font-size: 12px;
   font-weight: 500;
   color: #64748b;
   background: transparent;
-  border: 1px solid transparent;
-  border-bottom: none;
-  border-radius: 8px 8px 0 0;
+  border: none;
+  border-right: 1px solid #e2e8f0;
   cursor: pointer;
   transition: color 0.12s, background 0.12s;
   position: relative;
-  bottom: -1px;
+  white-space: nowrap;
+  outline: none;
 }
 
-.nba-tab:hover { color: #334155; background: #f8fafc; }
+.nba-tab:last-child { border-right: none; }
+.nba-tab:hover { color: #1e293b; background: #f8fafc; }
 
 .nba-tab-active {
   color: #1e293b;
   font-weight: 600;
   background: #fff;
-  border-color: #e2e8f0;
+}
+
+.nba-tab-active::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: #334155;
 }
 
 /* Tab content area */
@@ -975,47 +1037,44 @@
 .nba-section-card {
   background: #fff;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 
 .nba-section-header {
-  padding: 18px 20px 14px;
+  padding: 12px 16px 10px;
   border-bottom: 1px solid #f1f5f9;
 }
 
 .nba-section-title {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
   color: #0f172a;
   margin-bottom: 4px;
 }
 
 .nba-section-sub {
-  font-size: 12.5px;
+  font-size: 11px;
   color: #64748b;
   line-height: 1.5;
 }
 
 /* Dealer rows */
-.nba-dealer-list {
-  display: flex;
-  flex-direction: column;
-}
+.nba-dealer-list { display: flex; flex-direction: column; }
 
 .nba-dealer-row {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
+  gap: 12px;
+  padding: 10px 16px;
   border-bottom: 1px solid #f1f5f9;
   cursor: pointer;
   transition: background 0.12s;
 }
 
 .nba-dealer-row:last-child { border-bottom: none; }
-.nba-dealer-row:hover { background: #fafbfd; }
+.nba-dealer-row:hover { background: #fafbfc; }
 
 .nba-dealer-left { flex: 1; min-width: 0; }
 
@@ -1028,69 +1087,54 @@
 }
 
 .nba-dealer-name {
-  font-size: 14px;
+  font-size: 12.5px;
   font-weight: 600;
   color: #0f172a;
 }
 
 .nba-tier-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 9px;
-  border-radius: 999px;
-  font-size: 11.5px;
-  font-weight: 600;
-  background: #f1f5f9;
-  color: #475569;
+  display: inline-flex; align-items: center;
+  padding: 1px 7px; border-radius: 999px;
+  font-size: 10.5px; font-weight: 600;
+  background: #f1f5f9; color: #475569;
   border: 1px solid #e2e8f0;
 }
 
 .nba-badge-dispute {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 9px;
-  border-radius: 999px;
-  font-size: 11.5px;
-  font-weight: 600;
-  background: #fff7ed;
-  color: #c2410c;
+  display: inline-flex; align-items: center;
+  padding: 1px 7px; border-radius: 999px;
+  font-size: 10.5px; font-weight: 600;
+  background: #fff7ed; color: #c2410c;
   border: 1px solid #fed7aa;
 }
 
 .nba-badge-strategic {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 9px;
-  border-radius: 999px;
-  font-size: 11.5px;
-  font-weight: 600;
-  background: #dbeafe;
-  color: #1d4ed8;
+  display: inline-flex; align-items: center;
+  padding: 1px 7px; border-radius: 999px;
+  font-size: 10.5px; font-weight: 600;
+  background: #dbeafe; color: #1d4ed8;
   border: 1px solid #bfdbfe;
 }
 
 .nba-dealer-detail {
-  font-size: 12.5px;
+  font-size: 11px;
   color: #64748b;
   line-height: 1.4;
 }
 
-.nba-dealer-detail strong { color: #374151; }
+.nba-dealer-detail strong { color: #0f172a; font-weight: 600; }
 
-.nba-dealer-right {
-  text-align: right;
-  flex-shrink: 0;
-}
+.nba-dealer-right { text-align: right; flex-shrink: 0; }
 
 .nba-dealer-amount {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   color: #0f172a;
   letter-spacing: -0.3px;
 }
 
 .nba-dealer-score {
-  font-size: 11.5px;
+  font-size: 10.5px;
   color: #94a3b8;
   margin-top: 2px;
 }
@@ -1107,38 +1151,130 @@
 .nba-resume-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 0;
+  gap: 12px;
+  padding: 10px 12px 12px;
 }
 
 .nba-resume-card {
-  padding: 16px 20px;
-  border-right: 1px solid #f1f5f9;
+  padding: 12px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
   cursor: pointer;
   transition: background 0.12s;
 }
 
-.nba-resume-card:last-child { border-right: none; }
-.nba-resume-card:hover { background: #fafbfd; }
+.nba-resume-card:hover { background: #fafbfc; }
 
 .nba-resume-id {
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 600;
   color: #94a3b8;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 5px;
+  margin-bottom: 3px;
 }
 
 .nba-resume-dealer {
-  font-size: 13.5px;
+  font-size: 10.5px;
   font-weight: 600;
   color: #0f172a;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .nba-resume-stage {
-  font-size: 12px;
+  font-size: 10px;
   color: #64748b;
+}
+
+/* Release tab rows */
+.nba-release-top {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.nba-release-order-id {
+  font-size: 10px;
+  font-weight: 500;
+  color: #94a3b8;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
+.nba-release-status {
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.nba-status-normal { color: #64748b; }
+.nba-status-warn   { color: #ea580c; }
+.nba-status-dot    { color: #94a3b8; }
+
+.nba-unlock-label {
+  font-size: 10.5px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+/* Disputes tab rows */
+.nba-dispute-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 5px;
+}
+
+.nba-dispute-category {
+  display: inline-flex; align-items: center;
+  padding: 1px 7px; border-radius: 999px;
+  font-size: 10.5px; font-weight: 500;
+  background: #f1f5f9; color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.nba-dispute-sla {
+  display: inline-flex; align-items: center;
+  padding: 1px 8px; border-radius: 999px;
+  font-size: 10.5px; font-weight: 600;
+  background: #ef4444; color: #fff;
+}
+
+.nba-dispute-sub {
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.nba-dispute-status-text { color: #2563eb; }
+.nba-dispute-owner       { color: #94a3b8; }
+
+/* SLA tab badges */
+.nba-sla-status-escalated,
+.nba-sla-status-new,
+.nba-sla-status-waiting,
+.nba-sla-priority-critical,
+.nba-sla-priority-medium,
+.nba-sla-priority-low {
+  display: inline-flex; align-items: center;
+  padding: 1px 8px; border-radius: 999px;
+  font-size: 10.5px; font-weight: 600;
+}
+
+.nba-sla-status-escalated { background: #ef4444; color: #fff; }
+.nba-sla-status-new       { background: #3b82f6; color: #fff; }
+.nba-sla-status-waiting   { background: #f59e0b; color: #fff; }
+
+.nba-sla-priority-critical { background: #ef4444; color: #fff; }
+.nba-sla-priority-medium   { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+.nba-sla-priority-low      { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+
+.nba-breached-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #ef4444;
+  white-space: nowrap;
 }
 
 /* Placeholder */
@@ -1162,6 +1298,100 @@
   font-size: 13px;
   color: #cbd5e1;
 }
+
+/* Workload tab */
+.nba-wl-table {
+  width: calc(100% - 24px);
+  border-collapse: collapse;
+  margin: 12px 12px 0;
+}
+
+.nba-wl-th {
+  font-size: 9.5px;
+  font-weight: 600;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+  text-align: left;
+  padding: 4px 8px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.nba-wl-th-center { text-align: center; }
+.nba-wl-th-right  { text-align: right; }
+
+.nba-wl-tr:not(:last-child) td { border-bottom: 1px solid #f8fafc; }
+
+.nba-wl-td {
+  padding: 5px 8px;
+  font-size: 11px;
+  color: #0f172a;
+  vertical-align: middle;
+}
+
+.nba-wl-owner { font-weight: 500; }
+.nba-wl-role  { color: #64748b; }
+.nba-wl-center { text-align: center; }
+
+.nba-wl-breached-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #ef4444;
+  color: #fff;
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+.nba-wl-load-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.nba-wl-bar-wrap {
+  width: 75px;
+  height: 5px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.nba-wl-bar-fill {
+  height: 100%;
+  background: #3b82f6;
+  border-radius: 4px;
+}
+
+.nba-wl-pct {
+  font-size: 10.5px;
+  color: #64748b;
+  min-width: 28px;
+  text-align: right;
+}
+
+.nba-wl-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+  padding: 0 12px 12px;
+}
+
+.nba-wl-reassign-btn {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #374151;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.nba-wl-reassign-btn:hover { background: #f9fafb; }
 
 /* ============================================================
    RELEASE UNLOCK PAGE
@@ -1202,12 +1432,12 @@
 
 .reu-total-badge {
   flex-shrink: 0;
-  background: #f97316;
-  color: #fff;
-  font-size: 13px;
+  background: hsl(38, 92%, 50%);
+  
+  font-size: 12px;
   font-weight: 700;
-  padding: 8px 18px;
-  border-radius: 8px;
+  padding: 6px 16px;
+  border-radius: 999px;
   white-space: nowrap;
   letter-spacing: -0.2px;
 }
@@ -1216,9 +1446,9 @@
 .reu-table-card {
   background: #fff;
   border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
 }
 
 .reu-table {
@@ -1227,9 +1457,9 @@
 }
 
 .reu-th {
-  padding: 10px 20px;
+  padding: 8px 20px;
   text-align: left;
-  font-size: 10.5px;
+  font-size: 9.5px;
   font-weight: 700;
   color: #94a3b8;
   text-transform: uppercase;
@@ -1247,28 +1477,28 @@
 }
 
 .reu-tr:last-child { border-bottom: none; }
-.reu-tr:hover { background: #fafbfd; }
+.reu-tr:hover { background: #eff6ff; }
 
 .reu-td {
-  padding: 14px 20px;
+  padding: 10px 20px;
   vertical-align: middle;
 }
 
 .reu-order-id {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
   color: #94a3b8;
   letter-spacing: 0.3px;
 }
 
 .reu-dealer {
-  font-size: 13px;
+  font-size: 11.5px;
   font-weight: 600;
   color: #0f172a;
 }
 
 .reu-reason {
-  font-size: 12px;
+  font-size: 11px;
   color: #64748b;
 }
 
@@ -1280,7 +1510,7 @@
 }
 
 .reu-amount {
-  font-size: 13px;
+  font-size: 11.5px;
   font-weight: 700;
   color: #0f172a;
   letter-spacing: -0.2px;
@@ -1289,9 +1519,9 @@
 .reu-explore-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  font-size: 12px;
+  gap: 5px;
+  padding: 4px 10px;
+  font-size: 11px;
   font-weight: 500;
   color: #374151;
   background: transparent;
@@ -1306,6 +1536,107 @@
   background: #f8fafc;
   border-color: #cbd5e1;
   color: #1e293b;
+}
+
+/* ============================================================
+   RELEASE UNLOCK DETAIL PAGE  (reu-det-*)
+   ============================================================ */
+
+.reu-det-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 11px;
+  color: #64748b;
+  text-decoration: none;
+  margin-bottom: 8px;
+}
+
+.reu-det-back:hover { color: #0f172a; }
+
+.reu-det-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+}
+
+.reu-det-card-title {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.reu-det-context-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 8px;
+}
+
+.reu-det-label {
+  font-size: 9.5px;
+  color: #94a3b8;
+  margin-bottom: 2px;
+}
+
+.reu-det-value {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #0f172a;
+}
+
+.reu-det-criteria-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 8px;
+}
+
+.reu-det-criteria-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.reu-det-icon-met   { color: #22c55e; flex-shrink: 0; margin-top: 1px; }
+.reu-det-icon-block { color: #ef4444; flex-shrink: 0; margin-top: 1px; }
+
+.reu-det-criteria-text {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #0f172a;
+}
+
+.reu-det-criteria-sub {
+  font-size: 10.5px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.reu-det-amount {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.5px;
+  margin-bottom: 4px;
+}
+
+.reu-det-amount-sub {
+  font-size: 11px;
+  color: #64748b;
+  max-width: 560px;
+  line-height: 1.5;
+}
+
+.reu-det-not-found {
+  font-size: 14px;
+  color: #94a3b8;
+  padding: 40px;
 }
 
 /* ============================================================
