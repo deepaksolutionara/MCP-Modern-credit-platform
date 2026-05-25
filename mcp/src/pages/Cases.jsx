@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import '../App.css';
 import { Briefcase, Search, ChevronDown, ArrowUp } from 'lucide-react';
+import PageHeader from '../common/PageHeader';
 import Announcement from '../common/Announcement';
 import CaseCard from '../components/cases/CaseCard';
 import { casesBase as casesData } from '../data/casesData';
@@ -65,16 +66,11 @@ export default function Cases() {
 
       <Announcement />
 
-      {/* Header */}
-      <div className="wq-page-header">
-        <div className="wq-header-icon">
-          <Briefcase size={20} color="#3b82f6" />
-        </div>
-        <div>
-          <div className="dash-title">Cases</div>
-          <div className="dash-sub">All cases with assignment, SLA, and escalation tracking</div>
-        </div>
-      </div>
+      <PageHeader
+        icon={<Briefcase size={20} color="#3b82f6" />}
+        title="Cases"
+        subtitle="All cases with assignment, SLA, and escalation tracking"
+      />
 
       {/* Search + filter row */}
       <div className="cases-top-bar">

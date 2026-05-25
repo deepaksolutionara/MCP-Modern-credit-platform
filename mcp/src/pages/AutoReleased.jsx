@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { CheckCircle2 } from 'lucide-react';
+import PageHeader from '../common/PageHeader';
 import { Link } from 'react-router-dom';
 import '../App.css';
 
@@ -74,20 +75,12 @@ export default function AutoReleased() {
   return (
     <div className="dashboard">
 
-      {/* Header */}
-      <div className="ar-page-header">
-        <div className="ar-header-icon">
-          <CheckCircle2 size={22} color="#16a34a" />
-        </div>
-        <div>
-          <div className="dash-title">Recently Auto-Released</div>
-          <div className="dash-sub">
-            Orders released by the auto-release engine after a qualifying resolution event
-            (payment, return posting, dispute resolution, override).
-            Each row links to the case, decision, and JDE confirmation.
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon={<CheckCircle2 size={20} color="#16a34a" />}
+        iconBg="#f0fdf4"
+        title="Recently Auto-Released"
+        subtitle="Orders released by the auto-release engine after a qualifying resolution event (payment, return posting, dispute resolution, override)."
+      />
 
       {/* Table card */}
       <div className="card ar-table-card">

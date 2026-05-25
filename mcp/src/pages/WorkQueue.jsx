@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import '../App.css';
 import { Inbox } from 'lucide-react';
+import PageHeader from '../common/PageHeader';
 import Announcement from '../common/Announcement'
 
 // ── Tab definitions ───────────────────────────────────────────────────────────
@@ -92,16 +93,11 @@ export default function WorkQueue() {
 
      <Announcement/>
 
-      {/* Page header */}
-      <div className="wq-page-header">
-        <div className="wq-header-icon">
-          <Inbox size={20} color="#3b82f6" />
-        </div>
-        <div>
-          <div className="dash-title">Work Queues</div>
-          <div className="dash-sub">Operational queues for credit ops triage and resolution</div>
-        </div>
-      </div>
+      <PageHeader
+        icon={<Inbox size={20} color="#3b82f6" />}
+        title="Work Queues"
+        subtitle="Operational queues for credit ops triage and resolution"
+      />
 
       {/* Tabs */}
       <div className="card wq-card">

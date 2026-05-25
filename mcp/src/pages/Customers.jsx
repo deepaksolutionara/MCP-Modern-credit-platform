@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Users, Search, Bookmark, Clock } from 'lucide-react';
+import PageHeader from '../common/PageHeader';
 import { Link } from 'react-router-dom';
 import Announcement from '../common/Announcement';
 import { customersBase as customersData } from '../data/customersData';
@@ -33,18 +34,11 @@ export default function Customers() {
     <div className="dashboard">
       <Announcement />
 
-      {/* Header */}
-      <div className="cust-page-header">
-        <div className="cust-header-icon">
-          <Users size={18} color="#2b71ea" />
-        </div>
-        <div>
-          <div className="dash-title">Customers</div>
-          <div className="dash-sub">
-            Quick path: search by account number or name to reach the full customer credit profile.
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon={<Users size={20} color="#3b82f6" />}
+        title="Customers"
+        subtitle="Quick path: search by account number or name to reach the full customer credit profile."
+      />
 
       {/* Search */}
       <div className="cust-search-wrap">

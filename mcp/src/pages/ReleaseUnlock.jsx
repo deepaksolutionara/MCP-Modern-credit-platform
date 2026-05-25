@@ -1,41 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import '../App.css';
 import { KeyRound, ArrowRight } from 'lucide-react';
-
-// ── Data ──────────────────────────────────────────────────────────────────────
-
-const heldOrders = [
-  {
-    orderId:    'ORD-77321',
-    dealer:     'Alpine Equipment Co',
-    holdReason: 'Past due + utilization breach',
-    amount:     240000,
-  },
-  {
-    orderId:    'ORD-77342',
-    dealer:     'ProGear Distribution',
-    holdReason: 'Open order pushes exposure above limit',
-    amount:     180000,
-  },
-  {
-    orderId:    'ORD-77390',
-    dealer:     'SportMax Dealers',
-    holdReason: 'Return $28K pending posting',
-    amount:     95000,
-  },
-  {
-    orderId:    'ORD-77265',
-    dealer:     'Riverside Sports Co',
-    holdReason: 'Risk flag — credit review pending',
-    amount:     27800,
-  },
-  {
-    orderId:    'ORD-77241',
-    dealer:     'Summit Athletics',
-    holdReason: 'Annual review overdue — financials not submitted',
-    amount:     15600,
-  },
-];
+import PageHeader from '../common/PageHeader';
+import { heldOrders } from '../data/releaseUnlockData';
 
 function fmt(n) {
   if (n >= 1000000) return `$${(n / 1000000).toFixed(1)}M`;
@@ -45,27 +13,17 @@ function fmt(n) {
 
 const totalBlocked = heldOrders.reduce((s, o) => s + o.amount, 0);
 
-// ── Page ──────────────────────────────────────────────────────────────────────
-
 export default function ReleaseUnlock() {
   return (
     <div className="dashboard">
 
-      {/* Page header */}
-      <div className="reu-header">
-        <div className="reu-header-left">
-          <KeyRound size={22} className="reu-header-icon" />
-          <div>
-            <div className="reu-title">Release Unlock Explorer</div>
-            <div className="reu-sub">
-              Held orders ranked by revenue unlock potential. Open one to see what would clear it.
-            </div>
-          </div>
-        </div>
-        <div className="reu-total-badge">{fmt(totalBlocked)} total blocked</div>
-      </div>
+      <PageHeader
+        icon={<KeyRound size={20} color="#3b82f6" />}
+        title="Release Unlock Explorer"
+        subtitle="Held orders ranked by revenue unlock potential. Open one to see what would clear it."
+        actions={<div className="reu-total-badge">{fmt(totalBlocked)} total blocked</div>}
+      />
 
-      {/* Table */}
       <div className="reu-table-card">
         <table className="reu-table">
           <thead>
@@ -84,9 +42,9 @@ export default function ReleaseUnlock() {
                 <td className="reu-td reu-reason">{row.holdReason}</td>
                 <td className="reu-td reu-unlock-cell">
                   <span className="reu-amount">{fmt(row.amount)}</span>
-                  <button className="reu-explore-btn">
+                  <Link to={`/release-unlock/${row.orderId}`} className="reu-explore-btn">
                     Explore <ArrowRight size={13} />
-                  </button>
+                  </Link>
                 </td>
               </tr>
             ))}
