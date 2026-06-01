@@ -9,6 +9,7 @@ import {
   AlertTriangle, Megaphone, Bell, History, TrendingUp,
   BookMarked,
   UserPlus, Users, Activity, FileText,
+  Shield, Ban, FileCheck, Radio, Terminal, Share2,
 } from 'lucide-react';
 import '../App.css';
 
@@ -43,7 +44,16 @@ const navGroups = [
   {
     label: 'Lifecycle',
     items: [
-      { Icon: Eye, label: 'Prebook Visibility' },
+      { Icon: Activity,  label: 'Re-Decisioning',        to: '/re-decisioning-lifecycle' },
+      { Icon: History,   label: 'Re-Decisioning History' },
+      { Icon: Shield,    label: 'JDE Hold Governance'    },
+      { Icon: Archive,   label: 'Manual Credit Holds'    },
+      { Icon: Ban,       label: 'Credit Bypass'          },
+      { Icon: FileCheck, label: 'Exemption Policies'     },
+      { Icon: Radio,     label: 'Sales Portal Feed'      },
+      { Icon: Terminal,  label: 'CLI Requests'           },
+      { Icon: Share2,    label: 'Shared Credit Limits'   },
+      { Icon: Eye,       label: 'Prebook Visibility'     },
     ],
   },
   {

@@ -21,6 +21,7 @@ import AutoReleased from './pages/AutoReleased';
 import CaseDetail from './pages/CaseDetail';
 import ReDecisioningEvents from './pages/ReDecisioningEvents';
 import CreditHoldReport from './pages/CreditHoldReport';
+import ReDecisioningLifecycle from './pages/ReDecisioningLifecycle';
 
 import './App.css';
 
@@ -53,6 +54,7 @@ function App() {
                 <Route path="/auto-released" element={<AutoReleased />} />
                 <Route path="/re-decisioning" element={<ReDecisioningEvents />} />
                 <Route path="/credit-hold-report" element={<CreditHoldReport />} />
+                <Route path="/re-decisioning-lifecycle" element={<ReDecisioningLifecycle />} />
               </Routes>
             </main>
           </div>
