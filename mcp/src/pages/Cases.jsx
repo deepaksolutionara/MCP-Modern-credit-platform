@@ -46,6 +46,7 @@ export default function Cases() {
 
   const filtered = useMemo(() => {
     let rows = casesData;
+    const q = search.trim().toLowerCase();
     if (search)
       rows = rows.filter(c =>
         c.id.toLowerCase().includes(search.toLowerCase()) ||

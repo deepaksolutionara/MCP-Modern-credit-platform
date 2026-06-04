@@ -233,7 +233,7 @@
 }
 
 .preview-as-label {
-  font-size: 10.5px;
+  font-size: 9.5px;
   font-weight: 600;
   letter-spacing: 0.6px;
   color: #94a3b8;
@@ -262,8 +262,8 @@
   gap: 1px;
 }
 
-.preview-as-role { font-size: 12.5px; font-weight: 600; color: #1e293b; line-height: 1.2; }
-.preview-as-sub  { font-size: 10.5px; color: #94a3b8; line-height: 1.2; white-space: nowrap; }
+.preview-as-role { font-size: 11px; font-weight: 600; color: #1e293b; line-height: 1.2; }
+.preview-as-sub  { font-size: 9.5px; color: #94a3b8; line-height: 1.2; white-space: nowrap; }
 
 .preview-as-list {
   position: absolute;
@@ -293,14 +293,15 @@
 
 .search-bar {
   flex: 1;
-  max-width: 400px;
+  max-width: 260px;
+  margin-right: 40px;
   display: flex;
   align-items: center;
   gap: 8px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  padding: 7px 12px;
+  padding: 6px 11px;
   transition: border-color 0.15s;
 }
 
@@ -309,7 +310,7 @@
 .search-bar input {
   border: none;
   background: transparent;
-  font-size: 13px;
+  font-size: 11.5px;
   color: #1e293b;
   outline: none;
   width: 100%;
@@ -343,6 +344,10 @@
   border: 2px solid #fff;
 }
 
+.topbar-divider {
+  width: 1px; height: 24px; background: #e2e8f0; margin: 0 4px;
+}
+
 .topbar-user {
   display: flex;
   align-items: center;
@@ -354,9 +359,9 @@
 }
 
 .topbar-user:hover { background: #f8fafc; }
-.topbar-user > div { display: flex; flex-direction: column; font-size: 11.5px; }
-.topbar-user strong { font-size: 13px; font-weight: 600; color: #1e293b; line-height: 1.3; }
-.topbar-user span   { color: #64748b; line-height: 1.3; }
+.topbar-user > div { display: flex; flex-direction: column; font-size: 10px; }
+.topbar-user strong { font-size: 11px; font-weight: 600; color: #1e293b; line-height: 1.3; }
+.topbar-user span   { font-size: 10px; color: #64748b; line-height: 1.3; }
 
 /* ============================================================
    DASHBOARD PAGE
@@ -4072,6 +4077,8 @@
   cursor: pointer; transition: background 0.12s;
 }
 .cdtl-case-row-link:hover { background: #f8fafc; border-color: #e2e8f0; }
+.cdtl-row-badge { margin-left: 6px; }
+
 .cdtl-case-title {
   display: flex; align-items: center; gap: 2px;
   font-size: 12.5px; font-weight: 600; color: #1e293b; margin-bottom: 3px;
@@ -4506,6 +4513,41 @@
 
 /* ── Table ── */
 .rde-table-card { padding: 0; overflow: hidden; }
+
+/* ── Loading skeleton ── */
+.rde-skeleton {
+  display: block; height: 12px; border-radius: 4px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: rde-shimmer 1.4s infinite;
+}
+@keyframes rde-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Empty / error state rows ── */
+.rde-state-cell { padding: 48px 24px; text-align: center; }
+.rde-state-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.rde-state-icon       { margin-bottom: 4px; }
+.rde-state-icon-empty { color: #94a3b8; }
+.rde-state-icon-error { color: #ef4444; }
+.rde-state-msg  { font-size: 13px; font-weight: 600; color: #334155; margin: 0; }
+.rde-state-sub  { font-size: 11.5px; color: #94a3b8; margin: 0; }
+.rde-retry-btn  {
+  margin-top: 8px; padding: 5px 14px; border-radius: 6px;
+  background: #3b82f6; color: #fff; border: none;
+  font-size: 11.5px; font-weight: 600; cursor: pointer;
+}
+.rde-retry-btn:hover { background: #2563eb; }
+/* Visually hidden but announced by screen readers */
+.rde-caption {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
 .rde-table {
   width: 100%; border-collapse: collapse;
   table-layout: auto; font-size: 10px;
@@ -4551,6 +4593,10 @@
   display: inline-block; padding: 2px 8px; border-radius: 20px;
   font-size: 9.5px; font-weight: 600; white-space: nowrap;
 }
+.rde-outcome-green  { background: #22c55e; color: #fff; }
+.rde-outcome-red    { background: #ef4444; color: #fff; }
+.rde-outcome-amber  { background: #f59e0b; color: #fff; }
+.rde-outcome-default{ background: #e2e8f0; color: #475569; }
 
 /* Exposure delta */
 .rde-delta-val { font-weight: 700; font-size: 10px; color: #16a34a; }
@@ -4575,16 +4621,32 @@
 .chr-page-sub   { font-size: 11px; color: #64748b; margin-top: 2px; }
 
 /* Export buttons */
+
 .chr-export-btns { display: flex; gap: 6px; align-items: center; }
 .chr-btn-csv, .chr-btn-xlsx {
   display: inline-flex; align-items: center; gap: 5px;
   padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 600;
   cursor: pointer; border: none;
 }
+.chr-export-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chr-export-count {
+  font-size: 12px;
+  color: #64748b;
+  white-space: nowrap;
+}
 .chr-btn-csv  { background: #fff; color: #374151; border: 1px solid #d1d5db; }
-.chr-btn-csv:hover  { background: #f9fafb; }
+.chr-btn-csv:hover:not(:disabled)  { background: #f9fafb; }
 .chr-btn-xlsx { background: #3b82f6; color: #fff; }
-.chr-btn-xlsx:hover { background: #2563eb; }
+.chr-btn-xlsx:hover:not(:disabled) { background: #2563eb; }
+.chr-btn-csv:disabled,
+.chr-btn-xlsx:disabled {
+  opacity: 0.4; cursor: not-allowed;
+}
 
 /* Metadata bar */
 .chr-meta-bar {
@@ -4654,6 +4716,124 @@
 
 /* chr-* extra column helpers */
 .chr-td-doctype { text-align: center; }
+
+/* ── Re-Decisioning History (rdh-*) ──────────────────────────────────────── */
+
+.rdh-refresh-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 6px;
+  padding: 5px 11px; font-size: 11px; font-weight: 600; color: #334155;
+  cursor: pointer;
+}
+.rdh-refresh-btn:hover { background: #f8fafc; }
+
+/* KPI row */
+.rdh-kpi-row {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;
+}
+.rdh-kpi-card {
+  flex: 1; min-width: 120px;
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;
+  padding: 12px 16px;
+}
+.rdh-kpi-label {
+  font-size: 10px; font-weight: 600; color: #64748b;
+  text-transform: uppercase; letter-spacing: 0.4px;
+  margin-bottom: 6px;
+}
+.rdh-kpi-value  { font-size: 22px; font-weight: 700; line-height: 1; }
+.rdh-kpi-black  { color: #111827; }
+.rdh-kpi-red    { color: #dc2828; }
+.rdh-kpi-green  { color: #21c45d; }
+.rdh-kpi-amber  { color: #f59f0a; }
+
+/* Tabs */
+.rdh-tabs {
+  display: flex; gap: 0; border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 10px;
+}
+.rdh-tab {
+  background: none; border: none; border-bottom: 2px solid transparent;
+  padding: 7px 14px; font-size: 11.5px; font-weight: 500; color: #64748b;
+  cursor: pointer; margin-bottom: -1px;
+}
+.rdh-tab:hover { color: #334155; }
+.rdh-tab-active { color: #2662d9; border-bottom-color: #2662d9; font-weight: 600; }
+
+/* Filter pills */
+.rdh-filters {
+  display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px;
+}
+.rdh-filter-pill {
+  background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 999px;
+  padding: 3px 10px; font-size: 10px; font-weight: 500; color: #475569;
+  cursor: pointer;
+}
+.rdh-filter-pill:hover { background: #e2e8f0; }
+.rdh-filter-active {
+  background: #2662d9; border-color: #2662d9; color: #fff; font-weight: 600;
+}
+
+/* Table */
+.rdh-table-wrap { overflow-x: auto; }
+.rdh-table {
+  width: 100%; border-collapse: collapse;
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;
+  overflow: hidden; font-size: 11px;
+}
+.rdh-th {
+  background: #f8fafc; color: #64748b; font-size: 10px;
+  font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px;
+  padding: 7px 11px; border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap; text-align: left;
+}
+.rdh-tr { border-bottom: 1px solid #f1f5f9; }
+.rdh-tr:last-child { border-bottom: none; }
+.rdh-tr:hover { background: #f8fafc; }
+.rdh-td {
+  padding: 7px 11px; vertical-align: middle;
+  font-size: 11px; color: #111827; white-space: nowrap;
+}
+
+/* Column helpers */
+.rdh-order-id  { font-size: 11px; font-weight: 600; color: #111827; }
+.rdh-event-id  { font-size: 9.5px; color: #94a3b8; margin-top: 1px; }
+.rdh-dealer    { font-size: 11px; color: #334155; }
+.rdh-trigger   { font-size: 10.5px; color: #475569; max-width: 160px; white-space: normal; }
+.rdh-source    { font-size: 10.5px; color: #475569; }
+.rdh-from, .rdh-to { font-size: 10.5px; color: #475569; }
+.rdh-to        { color: #334155; font-weight: 500; }
+.rdh-when      { font-size: 10px; color: #94a3b8; white-space: nowrap; }
+
+/* Outcome / decision change */
+.rdh-outcome-row {
+  display: flex; align-items: center; gap: 5px; flex-wrap: wrap;
+}
+.rdh-arrow { font-size: 11px; color: #94a3b8; }
+.rdh-outcome-pill {
+  display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.3px;
+  border-radius: 999px; padding: 2px 8px; white-space: nowrap; color: #111827;
+}
+.rdh-outcome-green { background: #dcfce7; }
+.rdh-outcome-red   { background: #fee2e2; }
+.rdh-outcome-amber { background: #fef9c3; }
+
+/* Exposure / credit impact delta */
+.rdh-delta-green { font-size: 11px; font-weight: 600; color: #16a34a; }
+.rdh-delta-red   { font-size: 11px; font-weight: 600; color: #dc2828; }
+.rdh-delta-gray  { font-size: 11px; font-weight: 500; color: #94a3b8; }
+
+/* Upstream change pill */
+.rdh-change-pill {
+  display: inline-block;
+  background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 999px;
+  padding: 2px 9px; font-size: 9.5px; font-weight: 600; color: #334155;
+}
+
+/* Empty state */
+.rdh-empty {
+  padding: 28px; text-align: center; color: #94a3b8; font-size: 12px;
+}
 
 /* ── RDC JDE tab ─────────────────────────────────────────────────────────── */
 

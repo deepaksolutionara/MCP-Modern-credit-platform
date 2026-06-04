@@ -71,6 +71,34 @@ function slaStyle(sla) {
   return { color: '#64748b' };
 }
 
+// ── Column config ─────────────────────────────────────────────────────────────
+// Drives both <thead> and <tbody> — add/remove/reorder columns here only.
+// render(value, row) → ReactNode; if omitted, row[key] renders as plain text.
+// align: 'right' applies textAlign: 'right' to both the header and the cell.
+
+const COLUMNS = [
+  {
+    label: 'Case ID',
+    render: (_, c) => <a href="#" className="case-id">{c.id}</a>,
+  },
+  { label: 'Dealer',   key: 'dealer',   tdClass: 'dealer-name' },
+  { label: 'Type',     key: 'type',     tdClass: 'case-type'   },
+  {
+    label: 'Priority',
+    render: (_, c) => (
+      <span className="badge" style={priorityStyle[c.priority]}>{c.priority}</span>
+    ),
+  },
+  { label: 'Age', key: 'age', tdClass: 'case-age' },
+  {
+    label: 'SLA',
+    render: (_, c) => (
+      <span className="wq-sla" style={slaStyle(c.sla)}>{c.sla}</span>
+    ),
+  },
+  { label: 'Amount', key: 'amount', tdClass: 'case-amount', align: 'right' },
+];
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 // Maps ?queue=<value> → tab key
@@ -128,29 +156,29 @@ export default function WorkQueue() {
             <table className="cases-table">
               <thead>
                 <tr>
-                  <th>Case ID</th>
-                  <th>Dealer</th>
-                  <th>Type</th>
-                  <th>Priority</th>
-                  <th>Age</th>
-                  <th>SLA</th>
-                  <th style={{ textAlign: 'right' }}>Amount</th>
+                  {COLUMNS.map((col, i) => (
+                    <th key={i} style={col.align === 'right' ? { textAlign: 'right' } : undefined}>
+                      {col.label}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
                 {cases.map(c => (
                   <tr key={c.id}>
-                    <td><a href="#" className="case-id">{c.id}</a></td>
-                    <td className="dealer-name">{c.dealer}</td>
-                    <td className="case-type">{c.type}</td>
-                    <td>
-                      <span className="badge" style={priorityStyle[c.priority]}>
-                        {c.priority}
-                      </span>
-                    </td>
-                    <td className="case-age">{c.age}</td>
-                    <td className="wq-sla" style={slaStyle(c.sla)}>{c.sla}</td>
-                    <td className="case-amount">{c.amount}</td>
+                    {COLUMNS.map((col, ci) => {
+                      const val     = col.key ? c[col.key] : undefined;
+                      const content = col.render ? col.render(val, c) : val;
+                      return (
+                        <td
+                          key={ci}
+                          className={col.tdClass}
+                          style={col.align === 'right' ? { textAlign: 'right' } : undefined}
+                        >
+                          {content}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>

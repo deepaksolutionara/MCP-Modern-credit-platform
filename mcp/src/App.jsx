@@ -22,6 +22,7 @@ import CaseDetail from './pages/CaseDetail';
 import ReDecisioningEvents from './pages/ReDecisioningEvents';
 import CreditHoldReport from './pages/CreditHoldReport';
 import ReDecisioningLifecycle from './pages/ReDecisioningLifecycle';
+import ReDecisioningHistory from './pages/ReDecisioningHistory';
 
 import './App.css';
 
@@ -55,6 +56,7 @@ function App() {
                 <Route path="/re-decisioning" element={<ReDecisioningEvents />} />
                 <Route path="/credit-hold-report" element={<CreditHoldReport />} />
                 <Route path="/re-decisioning-lifecycle" element={<ReDecisioningLifecycle />} />
+                <Route path="/re-decisioning-history" element={<ReDecisioningHistory />} />
               </Routes>
             </main>
           </div>

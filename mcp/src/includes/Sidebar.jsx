@@ -45,7 +45,7 @@ const navGroups = [
     label: 'Lifecycle',
     items: [
       { Icon: Activity,  label: 'Re-Decisioning',        to: '/re-decisioning-lifecycle' },
-      { Icon: History,   label: 'Re-Decisioning History' },
+      { Icon: History,   label: 'Re-Decisioning History', to: '/re-decisioning-history' },
       { Icon: Shield,    label: 'JDE Hold Governance'    },
       { Icon: Archive,   label: 'Manual Credit Holds'    },
       { Icon: Ban,       label: 'Credit Bypass'          },

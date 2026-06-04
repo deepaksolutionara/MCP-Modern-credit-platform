@@ -32,6 +32,7 @@ function Topbar() {
           </svg>
           <span className="notif-badge"></span>
         </div>
+        <div className="topbar-divider"></div>
         <div className="topbar-user">
           <div className="avatar">JD</div>
           <div>

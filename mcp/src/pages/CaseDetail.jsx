@@ -9,32 +9,35 @@ import { getCaseDetail } from '../data/casesData';
 import { priorityBadge, statusBadge } from '../components/cases/CaseCard';
 import '../App.css';
 
+
+const invoiceBadgeMap = {
+  Overdue: { background: '#fee2e2', color: '#dc2626' },
+  'Past Due': { background: '#fef3c7', color: '#92400e' },
+  Disputed: { background: '#fef9c3', color: '#854d0e' },
+  'Pending Return': { background: '#ede9fe', color: '#6d28d9' },
+  Paid: { background: '#dcfce7', color: '#15803d' },
+  Open: { background: '#dbeafe', color: '#1d4ed8' },
+};
+
+const disputeBadgeMap = {
+  Open: { background: '#dbeafe', color: '#1d4ed8' },
+  Closed: { background: '#dcfce7', color: '#15803d' },
+};
 // ── tiny helpers ──────────────────────────────────────────────────────────────
 
 function slaColor(h) {
-  if (h <= 0)  return '#dc2626';
+  if (h <= 0) return '#dc2626';
   if (h <= 12) return '#f59e0b';
   return '#3b82f6';
 }
 
-function InvBadge({ status }) {
-  const map = {
-    Overdue:        '#fee2e2/#dc2626',
-    'Past Due':     '#fef3c7/#92400e',
-    Disputed:       '#fef9c3/#854d0e',
-    'Pending Return':'#ede9fe/#6d28d9',
-    Paid:           '#dcfce7/#15803d',
-    Open:           '#dbeafe/#1d4ed8',
-  };
-  const [bg, color] = (map[status] || '#f1f5f9/#475569').split('/');
-  return <span className="cdv-badge" style={{ background: bg, color }}>{status}</span>;
-}
-
-function DispBadge({ status }) {
-  const s = status === 'Open'
-    ? { background: '#dbeafe', color: '#1d4ed8' }
-    : { background: '#dcfce7', color: '#15803d' };
-  return <span className="cdv-badge" style={s}>{status}</span>;
+function Badge({ status, map }) {
+  const style = map[status] || { background: '#f1f5f9', color: '#475569' };
+  return (
+    <span className="cdv-badge" style={style}>
+      {status}
+    </span>
+  );
 }
 
 // ── Decision section ──────────────────────────────────────────────────────────
@@ -96,19 +99,22 @@ function SLASection({ c }) {
     ? `Breached +${Math.abs(c.slaHoursLeft)}h`
     : `${c.slaHoursLeft}h left`;
 
+    const slaActions = [
+  { label: 'Reassign', Icon: User, className: 'cdv-btn-ghost' },
+  { label: 'Escalate', Icon: ArrowUpRight, className: 'cdv-btn-escalate' },
+  { label: 'Override', Icon: Shield, className: 'cdv-btn-ghost' },
+];
+
   return (
     <div className="cdv-section">
-      <div className="cdv-section-title">
-        <Clock size={14} color="#64748b" />
-        SLA &amp; Assignment
-      </div>
 
+      <SectionTitle Icon={Clock} >SLA &amp; Assignment</SectionTitle>
       <div className="cdv-stat-grid">
         {[
-          { Icon: User,     label: 'Owner',   value: c.owner },
-          { Icon: Users,    label: 'Team',    value: c.team },
+          { Icon: User, label: 'Owner', value: c.owner },
+          { Icon: Users, label: 'Team', value: c.team },
           { Icon: Calendar, label: 'Created', value: c.createdAgo },
-          { Icon: Calendar, label: 'Due',     value: c.dueDate || '—' },
+          { Icon: Calendar, label: 'Due', value: c.dueDate || '—' },
         ].map(({ Icon, label, value }) => (
           <div key={label} className="cdv-stat-box">
             <div className="cdv-stat-label">
@@ -164,10 +170,8 @@ function DecisionContextSection({ c }) {
 
   return (
     <div className="cdv-section">
-      <div className="cdv-section-title">
-        <Activity size={14} color="#64748b" />
-        Decision Context
-      </div>
+
+      <SectionTitle Icon={Activity} > Decision Context</SectionTitle>
 
       <div className="cdv-ctx-grid">
         <div className="cdv-ctx-box">
@@ -224,10 +228,8 @@ function NotesSection({ notes }) {
   const [draft, setDraft] = useState('');
   return (
     <div className="cdv-section">
-      <div className="cdv-section-title">
-        <FileText size={14} color="#64748b" />
-        Notes
-      </div>
+
+      <SectionTitle Icon={FileText} >Notes</SectionTitle>
 
       {notes.length > 0 && (
         <div className="cdv-notes-list">
@@ -260,52 +262,34 @@ function NotesSection({ notes }) {
 
 // ── Sidebar sections ──────────────────────────────────────────────────────────
 
-function LinkedInvoices({ invoices, total }) {
+function LinkedItems({ Icon, title, items, total, BadgeComponent }) {
   return (
     <div className="cdv-sb-section">
       <div className="cdv-sb-header">
-        <FileText size={13} color="#64748b" />
-        <span>Linked Invoices ({invoices.length})</span>
+        <Icon size={13} color="#64748b" />
+        <span>{title} ({items.length})</span>
         {total && <span className="cdv-sb-total">{total}</span>}
       </div>
-      {invoices.length === 0
-        ? <div className="cdv-sb-empty">None linked</div>
-        : invoices.map(inv => (
-            <div key={inv.id} className="cdv-linked-row">
-              <span className="cdv-linked-id">{inv.id}</span>
-              <InvBadge status={inv.status} />
-              <span className="cdv-linked-amt">{inv.amount}</span>
-            </div>
-          ))}
-    </div>
-  );
-}
 
-function LinkedDisputes({ disputes, total }) {
-  return (
-    <div className="cdv-sb-section">
-      <div className="cdv-sb-header">
-        <Scale size={13} color="#64748b" />
-        <span>Linked Disputes ({disputes.length})</span>
-        {total && <span className="cdv-sb-total">{total}</span>}
-      </div>
-      {disputes.length === 0
-        ? <div className="cdv-sb-empty">None linked</div>
-        : disputes.map(d => (
-            <div key={d.id} className="cdv-linked-row">
-              <span className="cdv-linked-id">{d.id}</span>
-              <DispBadge status={d.status} />
-              <span className="cdv-linked-amt">{d.amount}</span>
-            </div>
-          ))}
+      {items.length === 0 ? (
+        <div className="cdv-sb-empty">None linked</div>
+      ) : (
+        items.map(item => (
+          <div key={item.id} className="cdv-linked-row">
+            <span className="cdv-linked-id">{item.id}</span>
+            {BadgeComponent(item.status)}
+            <span className="cdv-linked-amt">{item.amount}</span>
+          </div>
+        ))
+      )}
     </div>
   );
 }
 
 function FinancialSummary({ fin }) {
   if (!fin) return null;
-  const pastDueColor  = parseFloat(fin.pastDue)  > 0 ? '#dc2626' : '#0f172a';
-  const availColor    = fin.available !== '$0'        ? '#15803d' : '#0f172a';
+  const pastDueColor = parseFloat(fin.pastDue) > 0 ? '#dc2626' : '#0f172a';
+  const availColor = fin.available !== '$0' ? '#15803d' : '#0f172a';
 
   return (
     <div className="cdv-sb-section">
@@ -315,14 +299,14 @@ function FinancialSummary({ fin }) {
       </div>
       <div className="cdv-fin-rows">
         {[
-          { label: 'Total AR',           val: fin.totalAR,          color: '#0f172a' },
-          { label: 'Past Due',           val: fin.pastDue,          color: pastDueColor },
-          { label: 'Credit Limit',       val: fin.creditLimit,      color: '#0f172a' },
-          { label: 'Available',          val: fin.available,        color: availColor },
-          { label: 'Utilization',        val: fin.utilization,      color: '#0f172a' },
-          { label: 'Aging Trend',        val: fin.agingTrend,       color: '#0f172a' },
-          { label: 'Open Order Impact',  val: fin.openOrderImpact,  color: '#0f172a' },
-          { label: 'Pending Returns',    val: fin.pendingReturns,   color: '#0f172a' },
+          { label: 'Total AR', val: fin.totalAR, color: '#0f172a' },
+          { label: 'Past Due', val: fin.pastDue, color: pastDueColor },
+          { label: 'Credit Limit', val: fin.creditLimit, color: '#0f172a' },
+          { label: 'Available', val: fin.available, color: availColor },
+          { label: 'Utilization', val: fin.utilization, color: '#0f172a' },
+          { label: 'Aging Trend', val: fin.agingTrend, color: '#0f172a' },
+          { label: 'Open Order Impact', val: fin.openOrderImpact, color: '#0f172a' },
+          { label: 'Pending Returns', val: fin.pendingReturns, color: '#0f172a' },
         ].map(({ label, val, color }) => (
           <div key={label} className="cdv-fin-row">
             <span className="cdv-fin-label">{label}</span>
@@ -373,24 +357,36 @@ function NotificationsSent({ notifications }) {
       {notifications.length === 0
         ? <div className="cdv-sb-empty">No notifications sent</div>
         : notifications.map((n, i) => (
-            <div key={i} className="cdv-notif-item">
-              <div className="cdv-notif-top">
-                <span className="cdv-notif-channel">{n.channel}</span>
-                <span className="cdv-notif-time">{n.timeAgo}</span>
-              </div>
-              <div className="cdv-notif-subject">{n.subject}</div>
-              <div className="cdv-notif-recipient">→ {n.recipient}</div>
+          <div key={i} className="cdv-notif-item">
+            <div className="cdv-notif-top">
+              <span className="cdv-notif-channel">{n.channel}</span>
+              <span className="cdv-notif-time">{n.timeAgo}</span>
             </div>
-          ))}
+            <div className="cdv-notif-subject">{n.subject}</div>
+            <div className="cdv-notif-recipient">→ {n.recipient}</div>
+          </div>
+        ))}
     </div>
   );
 }
+
+// ── Helpers ────────────────────────────────────────────────────────────
+
+function SectionTitle({ Icon, children }) {
+  return (
+    <div className="cdv-section-title">
+      <Icon size={14} color="#64748b" />
+      {children}
+    </div>
+  );
+}
+
 
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function CaseDetail() {
   const { caseId } = useParams();
-  const navigate   = useNavigate();
+  const navigate = useNavigate();
   const c = getCaseDetail(caseId);
 
   if (!c) {
@@ -405,7 +401,7 @@ export default function CaseDetail() {
   }
 
   const pBadge = priorityBadge[c.priority] || { background: '#e2e8f0', color: '#475569' };
-  const sBadge = statusBadge[c.status]     || { background: '#e2e8f0', color: '#475569' };
+  const sBadge = statusBadge[c.status] || { background: '#e2e8f0', color: '#475569' };
 
   return (
     <div className="dashboard">
@@ -452,10 +448,22 @@ export default function CaseDetail() {
         </div>
 
         <div className="cdv-sidebar">
-          <LinkedInvoices  invoices={c.invoices}   total={c.invoicesTotal}  />
-          <LinkedDisputes  disputes={c.disputes}   total={c.disputesTotal}  />
+          <LinkedItems
+            Icon={FileText}
+            title="Linked Invoices"
+            items={c.invoices}
+            total={c.invoicesTotal}
+            BadgeComponent={(status) => <Badge status={status} map={invoiceBadgeMap} />}
+          />
+          <LinkedItems
+            Icon={Scale}
+            title="Linked Disputes"
+            items={c.disputes}
+            total={c.disputesTotal}
+            BadgeComponent={(status) => <Badge status={status} map={disputeBadgeMap} />}
+          />
           <FinancialSummary fin={c.financial} />
-          <ActivityAudit   timeline={c.timeline} />
+          <ActivityAudit timeline={c.timeline} />
           <NotificationsSent notifications={c.notifications} />
         </div>
 
