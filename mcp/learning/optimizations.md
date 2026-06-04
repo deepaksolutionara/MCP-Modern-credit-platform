@@ -99,3 +99,9 @@ LCP(largest contentful paint)  1950.36s -> 0.60s
 -->Use a COLUMNS array with map() to remove hard-coded table headers and cells.
 -->Keep totalBlocked memoized with useMemo() if heldOrders becomes dynamic.
 -->Move fmt() into a reusable formatter utility so other components can reuse it.
+
+## Release unlock detail
+
+-->Create reusable DetailCard and CriteriaRow components to reduce repeated JSX.
+-->Use a contextItems array with map() for the order context section.
+-->Move fmt() into a shared formatCurrencyShort() utility and use stable keys like c.text.
