@@ -116,3 +116,19 @@ LCP(largest contentful paint)  1950.36s -> 0.60s
 -->Replace TrendLine conditional logic with a TREND_CONFIG object.
 -->Move the large sections data array into a separate scorecardsData.js file.
 -->Create a reusable SectionBlock component to make the main Scorecards component shorter and cleaner.
+
+## Held orders
+-->Use filterTabsWithCount with useMemo() to avoid recalculating tab counts every render.
+-->Replace the sorting switch with a SORT_GETTERS config object.
+-->Use a COLUMNS array to render table headers and cells dynamically, and replace hard-coded colSpan={14} with colSpan={COLUMNS.length}.
+
+## DashBoard
+-->Replace TrendLine conditional logic with a TREND_CONFIG object.
+-->Move the large sections data array into a separate scorecardsData.js file.
+-->Create a reusable SectionBlock component to make the main Scorecards component shorter and cleaner.
+
+## Next Based Actions
+
+-->Replace multiple activeTab === ... conditions with a tabs config that includes Component and props.
+-->Move cashRecovery and slaCases data into a separate data file.
+-->Consider lazy loading tab components later if the tab content becomes large.

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import '../App.css';
 import PageHeader from '../common/PageHeader';
+import { Link } from 'react-router-dom';
 import {
   Briefcase,
   Package,
@@ -177,17 +178,19 @@ function Dashboard() {
             ))}
           </div>
 
-          <a href="#" className="audit-log-link">View full audit log →</a>
+          <Link to="/audit-log" className="audit-log-link">
+  View full audit log →
+</Link>
         </div>
       </div>
 
       <div className="card">
         <SectionHeader Icon={Zap} title="Recent Auto-Releases" />
 
-        
-{autoReleases.map(item => (
-  <AutoReleaseItem key={item.orderId} {...item} />
-))}
+
+        {autoReleases.map(item => (
+          <AutoReleaseItem key={item.orderId} {...item} />
+        ))}
       </div>
     </div>
   );
