@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import '../App.css';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, CreditCard, Lock, Scale, Clock, User } from 'lucide-react';
 import PageHeader from '../common/PageHeader';
 
 const CashTab = React.lazy(() => import('../components/nextbestaction/CashTab'));
@@ -8,16 +8,8 @@ import ReleaseTab  from '../components/nextbestaction/ReleaseTab';
 import DisputesTab from '../components/nextbestaction/DisputesTab';
 import SLATab      from '../components/nextbestaction/SLATab';
 import WorkloadTab from '../components/nextbestaction/WorkloadTab';
-import { tabs, cashRecovery, slaCases } from '../data/nextBestActionData';
+import {  cashRecovery, slaCases } from '../data/nextBestActionData';
 
-// TAB_COMPONENTS stays here — it holds React element factories, not plain data.
-const TAB_COMPONENTS = {
-  cash:     () => <CashTab cashRecovery={cashRecovery} />,
-  release:  () => <ReleaseTab />,
-  disputes: () => <DisputesTab />,
-  sla:      () => <SLATab slaCases={slaCases} />,
-  workload: () => <WorkloadTab />,
-};
 const tabs = [
   {
     key: 'cash',

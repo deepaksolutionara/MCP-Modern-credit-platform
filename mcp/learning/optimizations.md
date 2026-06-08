@@ -127,7 +127,7 @@ LCP(largest contentful paint)  1950.36s -> 0.60s
 -->Move the large sections data array into a separate scorecardsData.js file.
 -->Create a reusable SectionBlock component to make the main Scorecards component shorter and cleaner.
 
-## Next Based Actions
+## Next Best Actions
 
 -->Replace multiple activeTab === ... conditions with a tabs config that includes Component and props.
 -->Move cashRecovery and slaCases data into a separate data file.
