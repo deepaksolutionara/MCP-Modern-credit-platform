@@ -2,10 +2,14 @@ import React from 'react';
 import '../App.css';
 import Dropdown from '../common/Dropdown';
 
-function Topbar() {
+function Topbar({ onToggleSidebar }) {
   return (
     <header className="topbar">
-      <button className="topbar-toggle" aria-label="Toggle sidebar">
+      <button
+        className="topbar-toggle"
+        aria-label="Toggle sidebar"
+        onClick={onToggleSidebar}
+      >
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
           <rect x="1" y="1" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
           <rect x="10" y="1" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>

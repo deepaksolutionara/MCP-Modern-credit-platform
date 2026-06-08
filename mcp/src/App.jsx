@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Sidebar from './includes/Sidebar';
 import Topbar from './includes/Topbar';
@@ -27,13 +27,26 @@ import ReDecisioningHistory from './pages/ReDecisioningHistory';
 import './App.css';
 
 function App() {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
   return (
     <BrowserRouter>
       <div className="app-root">
-        <div className="app-layout">
+        <div className={`app-layout${sidebarOpen ? '' : ' sidebar-collapsed'}`}>
+
+          {/* Mobile overlay — tap to close sidebar */}
+          {sidebarOpen && (
+            <div
+              className="sidebar-overlay"
+              onClick={() => setSidebarOpen(false)}
+              aria-hidden="true"
+            />
+          )}
+
           <Sidebar />
+
           <div className="main-wrapper">
-            <Topbar />
+            <Topbar onToggleSidebar={() => setSidebarOpen(v => !v)} />
             <main className="page-content">
               <Routes>
                 <Route path="/" element={<Dashboard />} />
@@ -60,6 +73,7 @@ function App() {
               </Routes>
             </main>
           </div>
+
         </div>
       </div>
     </BrowserRouter>

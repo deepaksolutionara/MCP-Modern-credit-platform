@@ -56,6 +56,46 @@ const autoReleases = [
     time: '370d ago',
   },
 ];
+function SectionHeader({ Icon, title }) {
+  return (
+    <div className="section-header">
+      <Icon size={16} color="#3b82f6" />
+      <span className="section-title">{title}</span>
+    </div>
+  );
+}
+
+function RuleChangeItem({ rule, oldVal, newVal, author, time }) {
+  return (
+    <div className="rule-change-item">
+      <div className="rule-change-name">Rule updated: {rule}</div>
+      <div className="rule-change-vals">
+        <span className="rule-old">{oldVal}</span>
+        <span className="rule-arrow"> → </span>
+        <span className="rule-new">{newVal}</span>
+      </div>
+      <div className="rule-change-meta">{author} · {time}</div>
+    </div>
+  );
+}
+
+function AutoReleaseItem({ dealer, orderId, reason, badge, time }) {
+  return (
+    <div className="auto-release-item">
+      <div className="ar-left">
+        <div className="ar-dealer">
+          {dealer} · <span className="ar-order">{orderId}</span>
+        </div>
+        <div className="ar-reason">{reason}</div>
+      </div>
+
+      <div className="ar-right">
+        <span className="ar-badge">{badge}</span>
+        <span className="ar-time">{time}</span>
+      </div>
+    </div>
+  );
+}
 
 function Dashboard() {
   const [showBanner, setShowBanner] = useState(true);
@@ -115,10 +155,7 @@ function Dashboard() {
 
       <div className="sla-rules-row">
         <div className="card">
-          <div className="section-header">
-            <Timer size={16} color="#3b82f6" />
-            <span className="section-title">SLA Hotlist</span>
-          </div>
+          <SectionHeader Icon={Timer} title="SLA Hotlist" />
 
           {isLoading && <p>Loading SLA hotlist...</p>}
 
@@ -132,22 +169,11 @@ function Dashboard() {
         </div>
 
         <div className="card">
-          <div className="section-header">
-            <Settings2 size={16} color="#3b82f6" />
-            <span className="section-title">Recent Rule Changes</span>
-          </div>
+          <SectionHeader Icon={Settings2} title="Recent Rule Changes" />
 
           <div className="rule-changes-list">
-            {ruleChanges.map(rc => (
-              <div key={rc.rule} className="rule-change-item">
-                <div className="rule-change-name">Rule updated: {rc.rule}</div>
-                <div className="rule-change-vals">
-                  <span className="rule-old">{rc.oldVal}</span>
-                  <span className="rule-arrow"> → </span>
-                  <span className="rule-new">{rc.newVal}</span>
-                </div>
-                <div className="rule-change-meta">{rc.author} · {rc.time}</div>
-              </div>
+            {ruleChanges.map(item => (
+              <RuleChangeItem key={item.rule} {...item} />
             ))}
           </div>
 
@@ -156,29 +182,15 @@ function Dashboard() {
       </div>
 
       <div className="card">
-        <div className="section-header">
-          <Zap size={16} color="#3b82f6" />
-          <span className="section-title">Recent Auto-Releases</span>
-        </div>
+        <SectionHeader Icon={Zap} title="Recent Auto-Releases" />
 
-        {autoReleases.map(ar => (
-          <div key={ar.orderId} className="auto-release-item">
-            <div className="ar-left">
-              <div className="ar-dealer">
-                {ar.dealer} · <span className="ar-order">{ar.orderId}</span>
-              </div>
-              <div className="ar-reason">{ar.reason}</div>
-            </div>
-
-            <div className="ar-right">
-              <span className="ar-badge">{ar.badge}</span>
-              <span className="ar-time">{ar.time}</span>
-            </div>
-          </div>
-        ))}
+        
+{autoReleases.map(item => (
+  <AutoReleaseItem key={item.orderId} {...item} />
+))}
       </div>
     </div>
   );
 }
 
-export default Dashboard;
+export default Dashboard; 

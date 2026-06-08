@@ -4,7 +4,7 @@ import '../App.css';
 import { KeyRound, ArrowRight } from 'lucide-react';
 import PageHeader from '../common/PageHeader';
 import { heldOrders } from '../data/releaseUnlockData';
-import formatCurrencyShort from '../utils/formatters'
+import { formatCurrencyShort } from '../utils/formatters'
 
 function fmt(n) {
   if (n >= 1000000) return `$${(n / 1000000).toFixed(1)}M`;

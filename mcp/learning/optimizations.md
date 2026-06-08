@@ -104,4 +104,15 @@ LCP(largest contentful paint)  1950.36s -> 0.60s
 
 -->Create reusable DetailCard and CriteriaRow components to reduce repeated JSX.
 -->Use a contextItems array with map() for the order context section.
--->Move fmt() into a shared formatCurrencyShort() utility and use stable keys like c.text.
+-->git push origin optimized-codeMove fmt() into a shared formatCurrencyShort() utility and use stable keys like c.text.
+
+## Simulation-Studio
+
+-->Create reusable components like KpiCard, RangeInput, PillGroup, and SelectInput to reduce repeated JSX.
+-->Replace manual tabs and repeated KPI sections with config arrays and map().
+-->Combine related input states into state objects and clean up useMemo() dependencies.
+
+## ScoreCards
+-->Replace TrendLine conditional logic with a TREND_CONFIG object.
+-->Move the large sections data array into a separate scorecardsData.js file.
+-->Create a reusable SectionBlock component to make the main Scorecards component shorter and cleaner.

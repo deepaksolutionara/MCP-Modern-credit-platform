@@ -4,7 +4,7 @@ import { KeyRound, CheckCircle2, AlertCircle, ArrowLeft } from 'lucide-react';
 import PageHeader from '../common/PageHeader';
 import { heldOrders } from '../data/releaseUnlockData';
 import '../App.css';
-import  formatCurrencyShort  from '../utils/formatters';
+import { formatCurrencyShort } from '../utils/formatters';
 
 
 
@@ -53,7 +53,7 @@ export default function ReleaseUnlockDetail() {
       {/* Order context */}
 
       <DetailCard title="Order Context" >
-         <div className="reu-det-context-grid">
+        <div className="reu-det-context-grid">
           <div className="reu-det-context-grid">
             {contextItems.map(item => (
               <div key={item.label}>
@@ -68,7 +68,7 @@ export default function ReleaseUnlockDetail() {
       {/* What needs to change */}
 
       <DetailCard title="What needs to change for release eligibility" >
- <div className="reu-det-criteria-list">
+        <div className="reu-det-criteria-list">
           {order.criteria.map((c, i) => (
             <div key={i} className="reu-det-criteria-row">
               {c.met
@@ -85,13 +85,13 @@ export default function ReleaseUnlockDetail() {
       </DetailCard>
 
       {/* Potential revenue unlock */}
-    
-    <DetailCard title="Potential revenue unlock">
-<div className="reu-det-amount">{formatCurrencyShort(order.amount)}</div>
+
+      <DetailCard title="Potential revenue unlock">
+        <div className="reu-det-amount">{formatCurrencyShort(order.amount)}</div>
         <div className="reu-det-amount-sub">
           If all blocking conditions are cleared, this order will be released by the auto-release engine and synced to JDE.
         </div>
-    </DetailCard>
+      </DetailCard>
 
 
     </div>
