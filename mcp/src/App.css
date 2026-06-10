@@ -1117,19 +1117,19 @@ td, th, li {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 4px 12px;
+  padding: 2px 9px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
   color: #64748b;
-  background: #f9fafb;
+  background: #ffffff;
   border: 1px solid #e5e7eb;
   cursor: pointer;
   transition: background 0.12s, color 0.12s, border-color 0.12s;
 }
 
 .cases-sort-pill:hover { background: #e5e7eb; color: #334155; }
-.cases-sort-pill-active { background: #dbeafe; color: #1d4ed8; border-color: #93c5fd; }
+.cases-sort-pill-active { background: #1d4ed8; color: #ffffff; border-color: #1d4ed8; }
 
 .cases-list { display: flex; flex-direction: column; gap: 8px; }
 
@@ -1167,30 +1167,39 @@ td, th, li {
 /* Row 3: Order · Decision refs */
 .case-card-refs   { font-size: 12px; color: #94a3b8; }
 
-/* Row 4: Owner block */
-.case-card-owner-block { display: flex; flex-direction: column; gap: 4px; margin-top: 2px; }
+/* Row 4: Owner block — left: label/name/team, right: clock + bar + SLA text */
+.case-card-owner-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.case-card-owner-left { display: flex; flex-direction: column; gap: 2px; }
 
 .case-card-owner-label {
   font-size: 10.5px; font-weight: 600;
-  letter-spacing: 0.5px; color: #94a3b8;
+  letter-spacing: 0.4px; color: #94a3b8;
   text-transform: uppercase;
 }
 
-/* Owner name + SLA bar inline */
-.case-card-owner-sla {
+.case-card-owner-name { font-size: 14px; font-weight: 700; color: #0f172a; }
+
+.case-card-team { font-size: 12px; color: #64748b; }
+
+.case-card-sla-right {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+  min-width: 130px;
 }
 
-.case-card-owner-name { font-size: 13px; font-weight: 600; color: #1e293b; white-space: nowrap; }
-
-.case-card-sla-inline {
+.case-card-sla-bar-row {
   display: flex;
   align-items: center;
-  gap: 6px;
-  flex: 1;
-  min-width: 0;
+  gap: 5px;
 }
 
 .case-card-sla-track {
@@ -1207,21 +1216,17 @@ td, th, li {
   transition: width 0.3s ease;
 }
 
-.case-card-sla-text { font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+.case-card-sla-text { font-size: 12px; font-weight: 700; white-space: nowrap; }
 
-.case-card-team { font-size: 12px; color: #64748b; }
-
-/* Row 5: Footer divider + status/time */
-.case-card-footer-divider { height: 1px; background: #f9fafb; margin: 4px 0; }
-
+/* Row 5: Footer — status + time stacked right */
 .case-card-footer {
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
 }
 
-.case-right-status { font-size: 12px; font-weight: 600; color: #475569; }
+.case-right-status { font-size: 13px; font-weight: 700; color: #0f172a; }
 .case-card-time    { font-size: 11px; color: #94a3b8; white-space: nowrap; }
 
 /* Shared table styles */
@@ -3998,9 +4003,13 @@ td, th, li {
   margin-top: 2px;
 }
 
+.cust-search-container {
+  background: #fff; border: 1px solid #e5e7eb; border-radius: 10px;
+  padding: 10px; margin-bottom: 24px;
+}
+
 .cust-search-wrap {
   position: relative;
-  margin-bottom: 24px;
 }
 
 .cust-search-icon {
@@ -4017,9 +4026,9 @@ td, th, li {
   padding: 13px 16px 13px 42px;
   font-size: 14px;
   color: #1e293b;
-  background: #fff;
+  background: #f9fafb;
   border: 1px solid #e5e7eb;
-  border-radius: 4px;
+  border-radius: 7px;
   outline: none;
   box-sizing: border-box;
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -5083,11 +5092,14 @@ td, th, li {
 }
 
 /* Filter bar */
+.chr-filter-container {
+  background: #fff; border: 1px solid #e5e7eb; border-radius: 10px;
+  padding: 10px; margin-bottom: 12px;
+}
 .chr-filter-wrap {
   display: flex; align-items: center; gap: 8px;
-  background: #fff; border: 1px solid #e5e7eb; border-radius: 10px;
-  padding: 9px 14px; margin-bottom: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 7px;
+  padding: 9px 14px;
 }
 .chr-filter-input {
   border: none; outline: none; font-size: 13px; color: #334155;

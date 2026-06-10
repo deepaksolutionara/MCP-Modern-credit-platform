@@ -98,7 +98,7 @@ LCP(largest contentful paint)  1950.36s -> 0.60s
 ## Release unlock 
 -->Use a COLUMNS array with map() to remove hard-coded table headers and cells.
 -->Keep totalBlocked memoized with useMemo() if heldOrders becomes dynamic.
--->Move fmt() into a reusable formatter utility so other components can reuse it.
+-->Move fmt() into a reusable formatter utility so other components can reuse it...
 
 ## Release unlock detail
 

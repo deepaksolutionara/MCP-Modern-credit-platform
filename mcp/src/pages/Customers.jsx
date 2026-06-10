@@ -36,18 +36,20 @@ function StatusBadge({ status }) {
 
 function CustomerSearch({ value, onChange }) {
   return (
-    <div role="search" className="cust-search-wrap">
-      <Search size={16} className="cust-search-icon" aria-hidden="true" />
-      <input
-        id="customer-search"
-        className="cust-search-input"
-        type="search"
-        placeholder="Search account number (e.g. DLR-001) or customer name…"
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        aria-label="Search customers by account number or name"
-        autoComplete="off"
-      />
+    <div className="cust-search-container">
+      <div role="search" className="cust-search-wrap">
+        <Search size={16} className="cust-search-icon" aria-hidden="true" />
+        <input
+          id="customer-search"
+          className="cust-search-input"
+          type="search"
+          placeholder="Search account number (e.g. DLR-001) or customer name…"
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          aria-label="Search customers by account number or name"
+          autoComplete="off"
+        />
+      </div>
     </div>
   );
 }

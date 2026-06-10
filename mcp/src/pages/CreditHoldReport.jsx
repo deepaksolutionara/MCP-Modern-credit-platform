@@ -243,6 +243,8 @@ const { exportReport, exportRowCount } = useExportReport({
 
       {/* ── Filter bar ──────────────────────────────────────────────────── */}
       {/* Searches across customer, account, order, hold reason, rep, owner, notes */}
+      <div className="chr-filter-container">
+  
       <div className="chr-filter-wrap">
         <Filter size={14} color="#94a3b8" />
         <input
@@ -252,7 +254,7 @@ const { exportReport, exportRowCount } = useExportReport({
           onChange={e => setFilter(e.target.value)}
         />
       </div>
-
+      </div>
       {/* ── Report table ─────────────────────────────────────────────────── */}
       <div className="card chr-table-card">
         <div className="chr-preview-label">Report preview</div>

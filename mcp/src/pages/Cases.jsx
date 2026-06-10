@@ -42,13 +42,13 @@ function sortCases(cases, sortBy, dir) {
 
 function CasesHeader() {
   return (
-    <header className="cases-page-header">
-      <h1 className="cases-title">Cases</h1>
-      <div className="cases-subtitle-row">
-        <div className="cases-header-icon" aria-hidden="true">
-          <Briefcase size={18} color="#3b82f6" />
-        </div>
-        <p className="cases-subtitle">
+    <header className="chr-page-header">
+      <div className="chr-header-icon" aria-hidden="true">
+        <Briefcase size={18} color="#3b82f6" />
+      </div>
+      <div className="chr-header-content">
+        <h1 className="chr-title">Cases</h1>
+        <p className="chr-subtitle">
           All cases with assignment, SLA, and escalation tracking
         </p>
       </div>
