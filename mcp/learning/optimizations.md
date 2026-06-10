@@ -106,7 +106,7 @@ LCP(largest contentful paint)  1950.36s -> 0.60s
 -->Use a contextItems array with map() for the order context section.
 -->git push origin optimized-codeMove fmt() into a shared formatCurrencyShort() utility and use stable keys like c.text.
 
-## Simulation-Studio
+## SimulationStudio
 
 -->Create reusable components like KpiCard, RangeInput, PillGroup, and SelectInput to reduce repeated JSX.
 -->Replace manual tabs and repeated KPI sections with config arrays and map().

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Sidebar from './includes/Sidebar';
 import Topbar from './includes/Topbar';
@@ -26,16 +26,28 @@ import ReDecisioningHistory from './pages/ReDecisioningHistory';
 
 import './App.css';
 
+const MOBILE_BP = 768;
+
 function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  // Start open on desktop, collapsed on mobile
+  const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth > MOBILE_BP);
+
+  // Keep in sync with resize (e.g. rotate device, resize window)
+  useEffect(() => {
+    const onResize = () => setSidebarOpen(window.innerWidth > MOBILE_BP);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  const isMobile = window.innerWidth <= MOBILE_BP;
 
   return (
     <BrowserRouter>
       <div className="app-root">
         <div className={`app-layout${sidebarOpen ? '' : ' sidebar-collapsed'}`}>
 
-          {/* Mobile overlay — tap to close sidebar */}
-          {sidebarOpen && (
+          {/* Mobile scrim — tap anywhere outside to close */}
+          {sidebarOpen && isMobile && (
             <div
               className="sidebar-overlay"
               onClick={() => setSidebarOpen(false)}
@@ -43,11 +55,12 @@ function App() {
             />
           )}
 
-          <Sidebar />
+          {/* Pass close handler so nav clicks collapse on mobile */}
+          <Sidebar onNavClick={() => { if (window.innerWidth <= MOBILE_BP) setSidebarOpen(false); }} />
 
           <div className="main-wrapper">
             <Topbar onToggleSidebar={() => setSidebarOpen(v => !v)} />
-            <main className="page-content">
+            <main className="page-content" id="main-content" tabIndex={-1} aria-label="Main content">
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/queues" element={<WorkQueue />} />

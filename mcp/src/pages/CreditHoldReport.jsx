@@ -193,29 +193,39 @@ const { exportReport, exportRowCount } = useExportReport({
   return (
     <div className="dashboard">
 
-      {/* ── Page header with export buttons ─────────────────────────────── */}
-      <PageHeader
-        icon={<FileText size={20} color="#3b82f6" />}
-        title="Credit Hold Report"
-        subtitle="Daily hold reporting — supports continuity with the legacy Excel report."
-       actions={
-  <div className="chr-export-actions">
-    <span className="chr-export-count">
-      Exporting {rows.length} row{rows.length !== 1 ? 's' : ''}
-    </span>
+      {/* ── Page header: [icon] [title + desc] [CSV XLSX] in one horizontal row ── */}
+      <header className="chr-page-header">
+        <div className="chr-header-icon" aria-hidden="true">
+          <FileText size={18} color="#3b82f6" />
+        </div>
 
-    <div className="chr-export-btns">
-<button onClick={() => exportReport('csv')} className="chr-btn-csv">
-  <FileText size={13} /> CSV 
-</button>
+        <div className="chr-header-content">
+          <h1 className="chr-title">Credit Hold Report</h1>
+          <p className="chr-subtitle">
+            Daily hold reporting — supports continuity with the legacy Excel report.
+          </p>
+        </div>
 
-<button onClick={() => exportReport('xlsx')} className="chr-btn-xlsx">
-  <Download size={13} /> XLSX 
-</button>
-    </div>
-  </div>
-}
-      />
+        {/* Buttons as a separate flex item — horizontally aligned with icon and text */}
+        <div className="chr-export-btns">
+          <button
+            onClick={() => exportReport('csv')}
+            className="chr-btn-csv"
+            disabled={rows.length === 0}
+            aria-label="Export as CSV"
+          >
+            <FileText size={13} aria-hidden="true" /> CSV
+          </button>
+          <button
+            onClick={() => exportReport('xlsx')}
+            className="chr-btn-xlsx"
+            disabled={rows.length === 0}
+            aria-label="Export as XLSX"
+          >
+            <Download size={13} aria-hidden="true" /> XLSX
+          </button>
+        </div>
+      </header>
 
       {/* ── Metadata bar ────────────────────────────────────────────────── */}
       {/* Shows generation time, author, and live row count (updates with filter) */}
@@ -246,7 +256,7 @@ const { exportReport, exportRowCount } = useExportReport({
       {/* ── Report table ─────────────────────────────────────────────────── */}
       <div className="card chr-table-card">
         <div className="chr-preview-label">Report preview</div>
-        <div className="chr-table-wrap">
+        <div className="chr-table-wrap chr-table-scroll">
           <table className="chr-table">
             <thead>
               <tr>
