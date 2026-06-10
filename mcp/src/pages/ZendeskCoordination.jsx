@@ -3,6 +3,8 @@ import {
   Globe, Clock, CheckCircle2, ExternalLink,
   Search, RefreshCw,
 } from 'lucide-react';
+import DataTable from '../common/DataTable';
+import OwnerCell from '../common/OwnerCell';
 import '../App.css';
 
 // ── KPI config ────────────────────────────────────────────────────────────────
@@ -15,7 +17,15 @@ const kpiCards = [
   { label: 'MCM-linked',    value: '7',  color: '#0f172a', Icon: ExternalLink },
 ];
 
-// ── Ticket data ───────────────────────────────────────────────────────────────
+// ── Tab config ────────────────────────────────────────────────────────────────
+
+const TABS = [
+  { key: 'tickets', label: 'Tickets'      },
+  { key: 'routing', label: 'Routing Map'  },
+  { key: 'sync',    label: 'Sync Status', Icon: RefreshCw },
+];
+
+// ── Datasets ──────────────────────────────────────────────────────────────────
 
 const ticketRows = [
   { id: 'ZD-10421', dealer: 'Alpine Equipment Co',  subject: 'Credit hold dispute — ORD-77321 not released after payment', category: 'Credit Hold',   owner: 'M. Patel',  linked: 'CASE-2506', status: 'Open'    },
@@ -29,8 +39,6 @@ const ticketRows = [
   { id: 'ZD-10395', dealer: 'ProGear Distribution', subject: 'Hold released — confirmed payment received',                  category: 'Credit Hold',   owner: 'T. Kim',    linked: 'ORD-77342', status: 'Solved'  },
 ];
 
-// ── Routing map ───────────────────────────────────────────────────────────────
-
 const routingRules = [
   { trigger: 'Tag: credit-hold',     destination: 'Credit Team',      assignee: 'M. Patel',  priority: 'High',   linkedType: 'Case'    },
   { trigger: 'Tag: invoice-dispute', destination: 'Credit Team',      assignee: 'T. Kim',    priority: 'High',   linkedType: 'Invoice' },
@@ -41,20 +49,18 @@ const routingRules = [
   { trigger: 'Tag: preferences',     destination: 'Credit Ops',       assignee: 'J. Doe',    priority: 'Low',    linkedType: 'Dealer'  },
 ];
 
-// ── Sync events ───────────────────────────────────────────────────────────────
-
 const syncEvents = [
-  { time: '11/5/2026, 2:45 pm',  event: 'Ticket ZD-10421 status synced: Open → Open',         result: 'OK'   },
-  { time: '11/5/2026, 2:30 pm',  event: 'Ticket ZD-10418 linked to INV-8821',                 result: 'OK'   },
-  { time: '11/5/2026, 2:15 pm',  event: 'Ticket ZD-10395 resolved — MCM case closed',         result: 'OK'   },
-  { time: '11/5/2026, 1:50 pm',  event: 'Routing rule applied: tag credit-hold → M. Patel',   result: 'OK'   },
-  { time: '11/5/2026, 1:30 pm',  event: 'Sync heartbeat — 9 tickets active',                  result: 'OK'   },
-  { time: '11/5/2026, 12:00 pm', event: 'Ticket ZD-10403 — no MCM entity matched (DLR-005)',  result: 'Warn' },
-  { time: '11/5/2026, 11:45 am', event: 'Webhook payload received from Zendesk (batch: 4)',   result: 'OK'   },
-  { time: '11/5/2026, 10:00 am', event: 'Full sync completed — 9 records processed',          result: 'OK'   },
+  { time: '11/5/2026, 2:45 pm',  event: 'Ticket ZD-10421 status synced: Open → Open',        result: 'OK'   },
+  { time: '11/5/2026, 2:30 pm',  event: 'Ticket ZD-10418 linked to INV-8821',                result: 'OK'   },
+  { time: '11/5/2026, 2:15 pm',  event: 'Ticket ZD-10395 resolved — MCM case closed',        result: 'OK'   },
+  { time: '11/5/2026, 1:50 pm',  event: 'Routing rule applied: tag credit-hold → M. Patel',  result: 'OK'   },
+  { time: '11/5/2026, 1:30 pm',  event: 'Sync heartbeat — 9 tickets active',                 result: 'OK'   },
+  { time: '11/5/2026, 12:00 pm', event: 'Ticket ZD-10403 — no MCM entity matched (DLR-005)', result: 'Warn' },
+  { time: '11/5/2026, 11:45 am', event: 'Webhook payload received from Zendesk (batch: 4)',  result: 'OK'   },
+  { time: '11/5/2026, 10:00 am', event: 'Full sync completed — 9 records processed',         result: 'OK'   },
 ];
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Style maps ────────────────────────────────────────────────────────────────
 
 const STATUS_STYLE = {
   Open:    { bg: '#eff6ff', color: '#2563eb' },
@@ -68,32 +74,110 @@ const PRIORITY_STYLE = {
   Low:    { bg: '#f0fdf4', color: '#15803d' },
 };
 
-const LINKED_COLOR = { CASE: '#2563eb', INV: '#7c3aed', DLR: '#0891b2', DSP: '#c2410c', ORD: '#475569' };
+const SYNC_STYLE = {
+  OK:   { bg: '#f0fdf4', color: '#15803d' },
+  Warn: { bg: '#fffbeb', color: '#b45309' },
+};
+
+const LINKED_COLOR = {
+  CASE: '#2563eb', INV: '#7c3aed', DLR: '#0891b2', DSP: '#c2410c', ORD: '#475569',
+};
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function linkedColor(id) {
-  const prefix = id.split('-')[0];
-  return LINKED_COLOR[prefix] || '#64748b';
+  return LINKED_COLOR[id.split('-')[0]] || '#64748b';
 }
 
-function initials(name) {
-  return name.split(/[\s.]/).filter(Boolean).map(p => p[0]).join('').toUpperCase().slice(0, 2);
+function Badge({ value, styles }) {
+  const s = styles[value] || { bg: '#f8fafc', color: '#64748b' };
+  return (
+    <span className="zd-status-badge" style={{ background: s.bg, color: s.color }}>
+      {value}
+    </span>
+  );
 }
 
-// ── Page ─────────────────────────────────────────────────────────────────────
+// ── DataTable class overrides for zd-* styling ────────────────────────────────
+// Passed as the `classes` prop so DataTable renders with Zendesk styles instead
+// of the default cmod-* classes.
+
+const ZD_CLASSES = {
+  card:        'zd-table-card',
+  title:       'zd-tab-section-title',
+  searchWrap:  'zd-search-wrap',
+  searchIcon:  'zd-search-icon',
+  searchInput: 'zd-search-input',
+  table:       'zd-table',
+  th:          'zd-th',
+  tr:          'zd-tr',
+  td:          'zd-td',
+  empty:       'zd-empty',
+};
+
+// ── Column definitions ────────────────────────────────────────────────────────
+// Module-level so they are never recreated on re-render.
+
+const ticketColumns = [
+  {
+    label: 'Ticket',
+    render: (_, t) => (
+      <div className="zd-ticket-id">
+        <ExternalLink size={11} style={{ color: '#94a3b8' }} />
+        {t.id}
+      </div>
+    ),
+  },
+  { label: 'Dealer',   key: 'dealer',   className: 'zd-dealer'  },
+  { label: 'Subject',  key: 'subject',  className: 'zd-subject' },
+  { label: 'Category', render: (_, t) => <span className="zd-category">{t.category}</span> },
+  { label: 'Owner',    render: (_, t) => <OwnerCell name={t.owner} /> },
+  {
+    label: 'Linked',
+    render: (_, t) => (
+      <span className="zd-linked-id" style={{ color: linkedColor(t.linked) }}>
+        {t.linked}
+      </span>
+    ),
+  },
+  { label: 'Status', render: (_, t) => <Badge value={t.status} styles={STATUS_STYLE} /> },
+];
+
+const routingColumns = [
+  { label: 'Trigger',      render: (_, r) => <code className="zd-code">{r.trigger}</code> },
+  { label: 'Destination',  key: 'destination', className: 'zd-dealer' },
+  { label: 'Assignee',     render: (_, r) => <OwnerCell name={r.assignee} /> },
+  { label: 'Priority',     render: (_, r) => <Badge value={r.priority} styles={PRIORITY_STYLE} /> },
+  {
+    label: 'Linked Type',
+    render: (_, r) => (
+      <span className="zd-linked-id"
+        style={{ color: LINKED_COLOR[r.linkedType.toUpperCase()] || LINKED_COLOR.DLR }}>
+        {r.linkedType}
+      </span>
+    ),
+  },
+];
+
+const syncColumns = [
+  { label: 'Timestamp', key: 'time',  className: 'zd-muted zd-nowrap' },
+  { label: 'Event',     key: 'event', className: 'zd-subject'         },
+  { label: 'Result',    render: (_, e) => <Badge value={e.result} styles={SYNC_STYLE} /> },
+];
+
+// ── Page component ────────────────────────────────────────────────────────────
 
 export default function ZendeskCoordination() {
   const [activeTab, setActiveTab] = useState('tickets');
   const [search,    setSearch]    = useState('');
 
+  const SEARCH_FIELDS = ['id', 'dealer', 'subject', 'category', 'owner'];
+
   const filteredTickets = useMemo(() => {
-    const q = search.toLowerCase();
+    const q = search.trim().toLowerCase();
     if (!q) return ticketRows;
     return ticketRows.filter(t =>
-      t.id.toLowerCase().includes(q) ||
-      t.dealer.toLowerCase().includes(q) ||
-      t.subject.toLowerCase().includes(q) ||
-      t.category.toLowerCase().includes(q) ||
-      t.owner.toLowerCase().includes(q)
+      SEARCH_FIELDS.some(f => String(t[f]).toLowerCase().includes(q))
     );
   }, [search]);
 
@@ -102,13 +186,12 @@ export default function ZendeskCoordination() {
 
       {/* ── Header ── */}
       <div className="zd-page-header">
-        <div className="zd-page-icon">
-          <Globe size={20} />
-        </div>
+        <div className="zd-page-icon"><Globe size={20} /></div>
         <div>
           <div className="zd-page-title">Zendesk Coordination</div>
           <div className="zd-page-sub">
-            Read-only view of Zendesk tickets routed into MCM with linked cases, invoices, and disputes. MCM coordinates resolution; ticket maintenance stays in Zendesk.
+            Read-only view of Zendesk tickets routed into MCM with linked cases, invoices,
+            and disputes. MCM coordinates resolution; ticket maintenance stays in Zendesk.
           </div>
         </div>
       </div>
@@ -128,154 +211,59 @@ export default function ZendeskCoordination() {
 
       {/* ── Tab bar ── */}
       <div className="zd-tabbar">
-        <button
-          className={`zd-tab-btn ${activeTab === 'tickets' ? 'zd-tab-active' : ''}`}
-          onClick={() => { setActiveTab('tickets');  setSearch(''); }}
-        >Tickets</button>
-        <button
-          className={`zd-tab-btn ${activeTab === 'routing' ? 'zd-tab-active' : ''}`}
-          onClick={() => { setActiveTab('routing');  setSearch(''); }}
-        >Routing Map</button>
-        <button
-          className={`zd-tab-btn ${activeTab === 'sync' ? 'zd-tab-active' : ''}`}
-          onClick={() => { setActiveTab('sync');     setSearch(''); }}
-        >
-          <RefreshCw size={12} />
-          Sync Status
-        </button>
+        {TABS.map(({ key, label, Icon }) => (
+          <button
+            key={key}
+            className={`zd-tab-btn ${activeTab === key ? 'zd-tab-active' : ''}`}
+            onClick={() => { setActiveTab(key); setSearch(''); }}
+          >
+            {Icon && <Icon size={12} />}
+            {label}
+          </button>
+        ))}
       </div>
 
       {/* ── Tickets tab ── */}
       {activeTab === 'tickets' && (
-        <div className="zd-table-card">
-          <div className="zd-search-wrap">
-            <Search size={13} className="zd-search-icon" />
-            <input
-              className="zd-search-input"
-              placeholder="Search by ticket ID, subject, dealer..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
-          </div>
-          <table className="zd-table">
-            <thead>
-              <tr>
-                {['Ticket','Dealer','Subject','Category','Owner','Linked','Status'].map(h => (
-                  <th key={h} className="zd-th">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filteredTickets.length === 0 ? (
-                <tr><td colSpan={7} className="zd-empty">No tickets match your search.</td></tr>
-              ) : filteredTickets.map(t => (
-                <tr key={t.id} className="zd-tr">
-                  <td className="zd-td">
-                    <div className="zd-ticket-id">
-                      <ExternalLink size={11} style={{ color: '#94a3b8' }} />
-                      {t.id}
-                    </div>
-                  </td>
-                  <td className="zd-td zd-dealer">{t.dealer}</td>
-                  <td className="zd-td zd-subject">{t.subject}</td>
-                  <td className="zd-td">
-                    <span className="zd-category">{t.category}</span>
-                  </td>
-                  <td className="zd-td">
-                    <div className="zd-owner-wrap">
-                      <div className="zd-avatar">{initials(t.owner)}</div>
-                      <span className="zd-owner-name">{t.owner}</span>
-                    </div>
-                  </td>
-                  <td className="zd-td">
-                    <span className="zd-linked-id" style={{ color: linkedColor(t.linked) }}>{t.linked}</span>
-                  </td>
-                  <td className="zd-td">
-                    <span className="zd-status-badge" style={{
-                      background: (STATUS_STYLE[t.status] || {}).bg || '#f8fafc',
-                      color:      (STATUS_STYLE[t.status] || {}).color || '#64748b',
-                    }}>{t.status}</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          columns={ticketColumns}
+          rows={filteredTickets}
+          rowKey="id"
+          emptyMessage="No tickets match your search."
+          search={search}
+          onSearch={setSearch}
+          searchPlaceholder="Search by ticket ID, subject, dealer..."
+          classes={ZD_CLASSES}
+        />
       )}
 
       {/* ── Routing Map tab ── */}
       {activeTab === 'routing' && (
-        <div className="zd-table-card">
-          <div className="zd-tab-section-title">Zendesk → MCM Routing Rules</div>
-          <table className="zd-table">
-            <thead>
-              <tr>
-                {['Trigger','Destination','Assignee','Priority','Linked Type'].map(h => (
-                  <th key={h} className="zd-th">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {routingRules.map((r, i) => (
-                <tr key={i} className="zd-tr">
-                  <td className="zd-td"><code className="zd-code">{r.trigger}</code></td>
-                  <td className="zd-td zd-dealer">{r.destination}</td>
-                  <td className="zd-td">
-                    <div className="zd-owner-wrap">
-                      <div className="zd-avatar">{initials(r.assignee)}</div>
-                      <span className="zd-owner-name">{r.assignee}</span>
-                    </div>
-                  </td>
-                  <td className="zd-td">
-                    <span className="zd-status-badge" style={{
-                      background: (PRIORITY_STYLE[r.priority] || {}).bg || '#f8fafc',
-                      color:      (PRIORITY_STYLE[r.priority] || {}).color || '#64748b',
-                    }}>{r.priority}</span>
-                  </td>
-                  <td className="zd-td">
-                    <span className="zd-linked-id" style={{ color: LINKED_COLOR[r.linkedType.toUpperCase()] || LINKED_COLOR.DLR }}>
-                      {r.linkedType}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          columns={routingColumns}
+          rows={routingRules}
+          rowKey="trigger"
+          title="Zendesk → MCM Routing Rules"
+          classes={ZD_CLASSES}
+        />
       )}
 
       {/* ── Sync Status tab ── */}
+      {/* The sync tab needs a custom header (title + Live badge), so we pass a
+          ReactNode via the `title` prop instead of a plain string. */}
       {activeTab === 'sync' && (
-        <div className="zd-table-card">
-          <div className="zd-sync-header">
-            <div className="zd-tab-section-title">Webhook &amp; Sync Log</div>
-            <span className="zd-sync-live"><span className="zd-sync-dot" />Live</span>
-          </div>
-          <table className="zd-table">
-            <thead>
-              <tr>
-                {['Timestamp','Event','Result'].map(h => (
-                  <th key={h} className="zd-th">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {syncEvents.map((e, i) => (
-                <tr key={i} className="zd-tr">
-                  <td className="zd-td zd-muted zd-nowrap">{e.time}</td>
-                  <td className="zd-td zd-subject">{e.event}</td>
-                  <td className="zd-td">
-                    <span className="zd-status-badge" style={
-                      e.result === 'OK'
-                        ? { background: '#f0fdf4', color: '#15803d' }
-                        : { background: '#fffbeb', color: '#b45309' }
-                    }>{e.result}</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          columns={syncColumns}
+          rows={syncEvents}
+          rowKey={(_, i) => i}
+          title={
+            <div className="zd-sync-header">
+              <div className="zd-tab-section-title">Webhook &amp; Sync Log</div>
+              <span className="zd-sync-live"><span className="zd-sync-dot" />Live</span>
+            </div>
+          }
+          classes={ZD_CLASSES}
+        />
       )}
 
     </div>

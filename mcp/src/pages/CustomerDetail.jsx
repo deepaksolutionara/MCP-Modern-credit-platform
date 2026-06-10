@@ -3,11 +3,11 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   Building2, Package, BarChart2, CreditCard, BookOpen,
   FileText, ShieldCheck, Scale, Briefcase, ChevronRight,
-  Phone, Mail, ArrowUpRight, ArrowDownLeft, History,
-  MessageSquare, AlertTriangle, CheckCircle2, Clock,
+  Phone, Mail, History, MessageSquare,
 } from 'lucide-react';
 import { getCustomerDetail } from '../data/customersData';
 import { addRecentlyViewed } from '../utils/recentlyViewed';
+import ListRow from '../common/ListRow';
 import '../App.css';
 
 // ── Quick-action cards ────────────────────────────────────────────────────────
@@ -46,27 +46,14 @@ function RoleBadge({ role }) {
   return <span className="cdtl-role-badge">{role}</span>;
 }
 
+const STATUS_CLS = {
+  'On Hold':   'cdtl-pill-hold',
+  'Watchlist': 'cdtl-pill-watch',
+  'Active':    'cdtl-pill-active',
+};
+
 function StatusPill({ status }) {
-  const cls = status === 'On Hold'   ? 'cdtl-pill-hold'
-            : status === 'Watchlist' ? 'cdtl-pill-watch'
-            : status === 'Active'    ? 'cdtl-pill-active'
-            : '';
-  return <span className={`cdtl-status-pill ${cls}`}>{status}</span>;
-}
-
-function SLAPill({ sla }) {
-  const cls = sla === 'Breached'    ? 'ho-sla-breached'
-            : sla === 'Near Breach' ? 'ho-sla-near'
-            : 'ho-sla-ok';
-  return <span className={`ho-sla-pill ${cls}`}>{sla}</span>;
-}
-
-function PriorityBadge({ priority }) {
-  const cls = priority === 'Critical' ? 'cdtl-pri-critical'
-            : priority === 'High'     ? 'cdtl-pri-high'
-            : priority === 'Medium'   ? 'cdtl-pri-medium'
-            : 'cdtl-pri-low';
-  return <span className={`cdtl-pri-badge ${cls}`}>{priority}</span>;
+  return <span className={`cdtl-status-pill ${STATUS_CLS[status] ?? ''}`}>{status}</span>;
 }
 
 function EmptyState({ message }) {
@@ -83,7 +70,7 @@ function AddressBookTab({ customer }) {
       </div>
       <div className="cdtl-contacts-list">
         {customer.contacts.map((c, i) => (
-          <div key={i} className="cdtl-contact-row">
+          <div key={c.email} className="cdtl-contact-row">
             <div className="cdtl-contact-top">
               <span className="cdtl-contact-name">{c.name}</span>
               <RoleBadge role={c.role} />
@@ -118,15 +105,14 @@ function HeldOrdersTab({ customer }) {
   if (!customer.heldOrders.length) return <EmptyState message="No held orders for this account." />;
   return (
     <div className="cdtl-cases-list">
-      {customer.heldOrders.map((o, i) => (
-        <Link key={i} to={`/held-orders?dealer=${customer.accountNo}&order=${o.id}`} className="cdtl-case-row cdtl-case-row-link">
-          <div className="cdtl-case-title">
-            <span className="cdtl-case-id">{o.id}</span>
-            <span className="cdtl-case-dash"> — </span>
-            <span className="cdtl-case-status">{o.value}</span>
-          </div>
-          <div className="cdtl-case-meta">{o.reason} · {o.lifecycle}</div>
-        </Link>
+      {customer.heldOrders.map(o => (
+        <ListRow
+          key={o.id}
+          id={o.id}
+          label={o.value}
+          meta={`${o.reason} · ${o.lifecycle}`}
+          href={`/held-orders?dealer=${customer.accountNo}&order=${o.id}`}
+        />
       ))}
     </div>
   );
@@ -145,15 +131,13 @@ function ARLedgerTab({ customer }) {
   if (!customer.arLedger.length) return <EmptyState message="No A/R ledger entries." />;
   return (
     <div className="cdtl-cases-list">
-      {customer.arLedger.map((e, i) => (
-        <div key={i} className="cdtl-case-row">
-          <div className="cdtl-case-title">
-            <span className="cdtl-case-id">{e.ref}</span>
-            <span className="cdtl-case-dash"> — </span>
-            <span className="cdtl-case-status">{e.amount} {e.label}</span>
-          </div>
-          <div className="cdtl-case-meta">{e.type} · {e.aging}</div>
-        </div>
+      {customer.arLedger.map(e => (
+        <ListRow
+          key={e.ref}
+          id={e.ref}
+          label={`${e.amount} ${e.label}`}
+          meta={`${e.type} · ${e.aging}`}
+        />
       ))}
     </div>
   );
@@ -197,15 +181,13 @@ function InvoicesTab({ customer }) {
   if (!customer.invoices.length) return <EmptyState message="No invoices found." />;
   return (
     <div className="cdtl-inv-list">
-      {customer.invoices.map((inv, i) => (
-        <div key={i} className="cdtl-inv-card">
-          <div className="cdtl-case-title">
-            <span className="cdtl-case-id">{inv.id}</span>
-            <span className="cdtl-case-dash"> — </span>
-            <span className="cdtl-case-status">{inv.amount}</span>
-          </div>
-          <div className="cdtl-case-meta">{inv.status} · Due {inv.due}</div>
-        </div>
+      {customer.invoices.map(inv => (
+        <ListRow
+          key={inv.id}
+          id={inv.id}
+          label={inv.amount}
+          meta={`${inv.status} · Due ${inv.due}`}
+        />
       ))}
     </div>
   );
@@ -215,15 +197,13 @@ function DisputesTab({ customer }) {
   if (!customer.disputes.length) return <EmptyState message="No open disputes." />;
   return (
     <div className="cdtl-cases-list">
-      {customer.disputes.map((d, i) => (
-        <div key={i} className="cdtl-case-row">
-          <div className="cdtl-case-title">
-            <span className="cdtl-case-id">{d.id}</span>
-            <span className="cdtl-case-dash"> — </span>
-            <span className="cdtl-case-status">{d.amount}</span>
-          </div>
-          <div className="cdtl-case-meta">{d.type} · {d.status}</div>
-        </div>
+      {customer.disputes.map(d => (
+        <ListRow
+          key={d.id}
+          id={d.id}
+          label={d.amount}
+          meta={`${d.type} · ${d.status}`}
+        />
       ))}
     </div>
   );
@@ -233,15 +213,13 @@ function CasesTab({ customer }) {
   if (!customer.cases.length) return <EmptyState message="No cases linked to this account." />;
   return (
     <div className="cdtl-cases-list">
-      {customer.cases.map((c, i) => (
-        <div key={i} className="cdtl-case-row">
-          <div className="cdtl-case-title">
-            <Link to="/cases" className="cdtl-case-id">{c.id}</Link>
-            <span className="cdtl-case-dash"> — </span>
-            <span className="cdtl-case-status">{c.status}</span>
-          </div>
-          <div className="cdtl-case-meta">{c.priority} · Owner: {c.owner}</div>
-        </div>
+      {customer.cases.map(c => (
+        <ListRow
+          key={c.id}
+          id={<Link to="/cases" className="cdtl-case-id">{c.id}</Link>}
+          label={c.status}
+          meta={`${c.priority} · Owner: ${c.owner}`}
+        />
       ))}
     </div>
   );
@@ -254,7 +232,7 @@ function CommunicationsTab({ customer }) {
       <div className="cdtl-section-title"><MessageSquare size={13} color="#3b82f6" /> Communications</div>
       <div className="cdtl-comm-list">
         {customer.communications.map((c, i) => (
-          <div key={i} className="cdtl-comm-row">
+          <div key={c.id} className="cdtl-comm-row">
             <div className="cdtl-comm-top">
               <span className="cdtl-comm-channel">{c.channel}</span>
               <span className="cdtl-comm-subject">{c.subject}</span>
@@ -274,7 +252,7 @@ function AuditHistoryTab({ customer }) {
       <div className="cdtl-section-title"><History size={13} color="#3b82f6" /> Audit history</div>
       <div className="cdtl-audit-track">
         {customer.auditHistory.map((e, i) => (
-          <div key={i} className="cdtl-audit-entry">
+          <div key={e.ref} className="cdtl-audit-entry">
             <div className="cdtl-audit-action">{e.action}</div>
             <div className="cdtl-audit-meta">
               {e.user} · {e.date}{e.detail ? ` · ${e.detail}` : ''}
@@ -296,7 +274,8 @@ export default function CustomerDetail() {
   const customer = getCustomerDetail(accountNo);
 
   useEffect(() => {
-    if (customer) addRecentlyViewed(customer.accountNo, customer.customer);
+    const c = getCustomerDetail(accountNo);
+    if (c) addRecentlyViewed(c.accountNo, c.customer);
   }, [accountNo]);
 
   if (!customer) {
@@ -310,24 +289,21 @@ export default function CustomerDetail() {
     );
   }
 
-  function renderTab() {
-    switch (activeTab) {
-      case 'address_book':  return <AddressBookTab  customer={customer} />;
-      case 'aging':         return <AgingTab         customer={customer} />;
-      case 'held_orders':   return <HeldOrdersTab    customer={customer} />;
-      case 'payments':      return <PaymentsTab />;
-      case 'ar_ledger':     return <ARLedgerTab      customer={customer} />;
-      case 'notes':         return <NotesTab />;
-      case 'credit_limit':  return <CreditLimitTab   customer={customer} />;
-      case 'invoices':      return <InvoicesTab      customer={customer} />;
-      case 'disputes':      return <DisputesTab      customer={customer} />;
-      case 'cases':         return <CasesTab         customer={customer} />;
-      case 'communications':return <CommunicationsTab customer={customer} />;
-      case 'audit_history': return <AuditHistoryTab  customer={customer} />;
-      default: return null;
-    }
-  }
-
+const TAB_COMPONENTS = {
+  address_book: AddressBookTab,
+  aging: AgingTab,
+  held_orders: HeldOrdersTab,
+  payments: PaymentsTab,
+  ar_ledger: ARLedgerTab,
+  notes: NotesTab,
+  credit_limit: CreditLimitTab,
+  invoices: InvoicesTab,
+  disputes: DisputesTab,
+  cases: CasesTab,
+  communications: CommunicationsTab,
+  audit_history: AuditHistoryTab,
+};
+const ActiveTabComponent = TAB_COMPONENTS[activeTab];
   return (
     <div className="dashboard">
 
@@ -377,7 +353,7 @@ export default function CustomerDetail() {
 
       {/* Tab content */}
       <div className="card cdtl-tab-content">
-        {renderTab()}
+        {ActiveTabComponent ? <ActiveTabComponent customer={customer} /> : null}
       </div>
 
     </div>

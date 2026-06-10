@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Sidebar from './includes/Sidebar';
 import Topbar from './includes/Topbar';
@@ -22,17 +22,31 @@ import CaseDetail from './pages/CaseDetail';
 import ReDecisioningEvents from './pages/ReDecisioningEvents';
 import CreditHoldReport from './pages/CreditHoldReport';
 import ReDecisioningLifecycle from './pages/ReDecisioningLifecycle';
+import ReDecisioningHistory from './pages/ReDecisioningHistory';
 
 import './App.css';
 
 function App() {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
   return (
     <BrowserRouter>
       <div className="app-root">
-        <div className="app-layout">
+        <div className={`app-layout${sidebarOpen ? '' : ' sidebar-collapsed'}`}>
+
+          {/* Mobile overlay — tap to close sidebar */}
+          {sidebarOpen && (
+            <div
+              className="sidebar-overlay"
+              onClick={() => setSidebarOpen(false)}
+              aria-hidden="true"
+            />
+          )}
+
           <Sidebar />
+
           <div className="main-wrapper">
-            <Topbar />
+            <Topbar onToggleSidebar={() => setSidebarOpen(v => !v)} />
             <main className="page-content">
               <Routes>
                 <Route path="/" element={<Dashboard />} />
@@ -55,9 +69,11 @@ function App() {
                 <Route path="/re-decisioning" element={<ReDecisioningEvents />} />
                 <Route path="/credit-hold-report" element={<CreditHoldReport />} />
                 <Route path="/re-decisioning-lifecycle" element={<ReDecisioningLifecycle />} />
+                <Route path="/re-decisioning-history" element={<ReDecisioningHistory />} />
               </Routes>
             </main>
           </div>
+
         </div>
       </div>
     </BrowserRouter>

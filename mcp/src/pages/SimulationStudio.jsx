@@ -2,6 +2,9 @@ import React, { useState, useMemo } from 'react';
 import '../App.css';
 import { FlaskConical } from 'lucide-react';
 import PageHeader from '../common/PageHeader';
+import SimKpiCard from '../common/SimKpiCard';
+import { SelectInput, NumberInput, RangeInput, PillGroup } from '../components/simulationstudio/SimInputs';
+import { formatCurrencyShort, deltaLabel } from '../utils/formatters';
 
 // ── Dealer baseline data ──────────────────────────────────────────────────────
 
@@ -13,37 +16,40 @@ const dealerBaselines = {
   'Summit Athletics':      { totalExposure: 22000,   creditLimit: 40000,   heldValue: 15600,  returnConfBase: 88, utilBase: 62, minPayment: 0,       policyRef: 'Credit Policy §2.4' },
 };
 
+const SIM_TABS = [
+  { key: 'dealer', label: 'Dealer-Level', Component: DealerTab },
+  { key: 'policy', label: 'Policy-Level', Component: PolicyTab },
+];
+
 const dealerNames = Object.keys(dealerBaselines);
 
-function fmtM(n) {
-  if (Math.abs(n) >= 1000000) return `$${(n / 1000000).toFixed(1)}M`;
-  if (Math.abs(n) >= 1000)    return `$${Math.round(n / 1000)}K`;
-  return `$${n}`;
-}
-
-function deltaLabel(d) {
-  if (d === 0)  return `= $0K`;
-  if (d > 0)    return `↑ ${fmtM(d)}`;
-  return `↓ ${fmtM(Math.abs(d))}`;
-}
+// fmtM is a local alias kept for brevity inside this file.
+const fmtM = formatCurrencyShort;
 
 // ── Dealer-Level Tab ──────────────────────────────────────────────────────────
 
+const DEALER_DEFAULTS = {
+  payment:       0,
+  disputeAmt:    0,
+  returnConf:    70,
+  utilThreshold: 85,
+};
+
 function DealerTab() {
-  const [dealer,           setDealer]           = useState(dealerNames[0]);
-  const [payment,          setPayment]           = useState(0);
-  const [disputeAmt,       setDisputeAmt]        = useState(0);
-  const [returnConf,       setReturnConf]        = useState(70);
-  const [utilThreshold,    setUtilThreshold]     = useState(85);
+  const [dealer, setDealer] = useState(dealerNames[0]);
+  const [inputs, setInputs] = useState(DEALER_DEFAULTS);
 
   const base = dealerBaselines[dealer];
 
-  function reset() {
-    setPayment(0);
-    setDisputeAmt(0);
-    setReturnConf(70);
-    setUtilThreshold(85);
+  function updateInput(key, value) {
+    setInputs(prev => ({ ...prev, [key]: value }));
   }
+
+  function reset() {
+    setInputs(DEALER_DEFAULTS);
+  }
+
+  const { payment, disputeAmt, returnConf, utilThreshold } = inputs;
 
   const sim = useMemo(() => {
     const newExposure      = Math.max(0, base.totalExposure - payment - disputeAmt);
@@ -58,11 +64,12 @@ function DealerTab() {
     return {
       newExposure, newAvailCredit, baseAvailCredit,
       newHeldValue, heldReduction, newUtil, canRelease,
-      exposureDelta:     newExposure - base.totalExposure,
-      availCreditDelta:  newAvailCredit - baseAvailCredit,
-      heldDelta:         newHeldValue - base.heldValue,
+      exposureDelta:    newExposure - base.totalExposure,
+      availCreditDelta: newAvailCredit - baseAvailCredit,
+      heldDelta:        newHeldValue - base.heldValue,
     };
-  }, [dealer, payment, disputeAmt, returnConf, utilThreshold, base]);
+  // `base` is derived from `dealer` so listing both would be redundant.
+  }, [dealer, payment, disputeAmt, returnConf, utilThreshold]);
 
   return (
     <>
@@ -71,78 +78,42 @@ function DealerTab() {
         <div className="sim-section-title">Inputs</div>
 
         <div className="sim-inputs-grid">
-          {/* Dealer */}
-          <div className="sim-input-group">
-            <div className="sim-input-label">Dealer</div>
-            <div className="cases-select-wrap">
-              <select
-                className="cases-select sim-full-select"
-                value={dealer}
-                onChange={e => { setDealer(e.target.value); reset(); }}
-              >
-                {dealerNames.map(n => <option key={n}>{n}</option>)}
-              </select>
-              <svg className="cases-select-chevron" width="12" height="12" viewBox="0 0 12 12">
-                <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-              </svg>
-            </div>
-          </div>
+          <SelectInput
+            label="Dealer"
+            options={dealerNames}
+            value={dealer}
+            onChange={v => { setDealer(v); reset(); }}
+          />
 
-          {/* Payment receipt */}
-          <div className="sim-input-group">
-            <div className="sim-input-label">Payment receipt ($)</div>
-            <input
-              type="number"
-              className="sim-number-input"
-              min={0}
-              value={payment}
-              onChange={e => setPayment(Math.max(0, Number(e.target.value)))}
-              placeholder="0"
-            />
-          </div>
+          <NumberInput
+            label="Payment receipt ($)"
+            value={payment}
+            onChange={v => updateInput('payment', v)}
+          />
 
-          {/* Dispute resolution */}
-          <div className="sim-input-group">
-            <div className="sim-input-label">Dispute resolution amount ($)</div>
-            <input
-              type="number"
-              className="sim-number-input"
-              min={0}
-              value={disputeAmt}
-              onChange={e => setDisputeAmt(Math.max(0, Number(e.target.value)))}
-              placeholder="0"
-            />
-          </div>
+          <NumberInput
+            label="Dispute resolution amount ($)"
+            value={disputeAmt}
+            onChange={v => updateInput('disputeAmt', v)}
+          />
 
-          {/* Return confidence */}
-          <div className="sim-input-group">
-            <div className="sim-input-label-row">
-              <span>Return confidence ({returnConf}%)</span>
-              <span className="sim-current-label">Current: {base.returnConfBase}%</span>
-            </div>
-            <input
-              type="range" min={0} max={100} step={1}
-              value={returnConf}
-              onChange={e => setReturnConf(Number(e.target.value))}
-              className="sim-slider"
-            />
-          </div>
+          <RangeInput
+            label="Return confidence"
+            value={returnConf}
+            min={0} max={100}
+            currentLabel={`Current: ${base.returnConfBase}%`}
+            onChange={v => updateInput('returnConf', v)}
+            span={1}
+          />
 
-          {/* Utilization threshold — full width */}
-          <div className="sim-input-group sim-span-2">
-            <div className="sim-input-label-row">
-              <span>Utilization threshold ({utilThreshold}%)</span>
-              <span className="sim-current-label">Current policy: {base.utilBase}%</span>
-            </div>
-            <input
-              type="range" min={50} max={100} step={1}
-              value={utilThreshold}
-              onChange={e => setUtilThreshold(Number(e.target.value))}
-              className="sim-slider"
-            />
-          </div>
+          <RangeInput
+            label="Utilization threshold"
+            value={utilThreshold}
+            min={50} max={100}
+            currentLabel={`Current policy: ${base.utilBase}%`}
+            onChange={v => updateInput('utilThreshold', v)}
+          />
 
-          {/* Reset — right aligned full width */}
           <div className="sim-span-2 sim-reset-row">
             <button className="btn-outline sim-reset-btn" onClick={reset}>Reset</button>
           </div>
@@ -153,58 +124,50 @@ function DealerTab() {
       <div className="sim-card">
         <div className="sim-section-title">Impact preview</div>
 
-        <div className="sim-kpi-row">
-          {/* Total Exposure */}
-          <div className="sim-kpi-cell">
-            <div className="sim-kpi-heading">Total Exposure</div>
-            <div className="sim-kpi-values">
-              <span className="sim-kpi-old">{fmtM(base.totalExposure)}</span>
-              <span className="sim-kpi-arrow">→</span>
-              <span className="sim-kpi-new">{fmtM(sim.newExposure)}</span>
-            </div>
-            <div className={`sim-kpi-delta ${sim.exposureDelta < 0 ? 'sim-delta-good' : sim.exposureDelta > 0 ? 'sim-delta-bad' : ''}`}>
-              {deltaLabel(sim.exposureDelta)}
-            </div>
-          </div>
+        {(() => {
+          const dealerKpis = [
+            {
+              heading:    'Total Exposure',
+              oldValue:   fmtM(base.totalExposure),
+              newValue:   fmtM(sim.newExposure),
+              delta:      deltaLabel(sim.exposureDelta),
+              deltaClass: sim.exposureDelta < 0 ? 'sim-delta-good' : sim.exposureDelta > 0 ? 'sim-delta-bad' : '',
+            },
+            {
+              heading:    'Available Credit',
+              oldValue:   fmtM(sim.baseAvailCredit),
+              newValue:   fmtM(sim.newAvailCredit),
+              delta:      deltaLabel(sim.availCreditDelta),
+              deltaClass: sim.availCreditDelta > 0 ? 'sim-delta-good' : sim.availCreditDelta < 0 ? 'sim-delta-bad' : '',
+            },
+            {
+              heading:    'Held-Order Impact',
+              oldValue:   fmtM(base.heldValue),
+              newValue:   fmtM(sim.newHeldValue),
+              delta:      deltaLabel(sim.heldDelta),
+              deltaClass: sim.heldDelta < 0 ? 'sim-delta-good' : '',
+            },
+          ];
 
-          {/* Available Credit */}
-          <div className="sim-kpi-cell">
-            <div className="sim-kpi-heading">Available Credit</div>
-            <div className="sim-kpi-values">
-              <span className="sim-kpi-old">{fmtM(sim.baseAvailCredit)}</span>
-              <span className="sim-kpi-arrow">→</span>
-              <span className="sim-kpi-new">{fmtM(sim.newAvailCredit)}</span>
-            </div>
-            <div className={`sim-kpi-delta ${sim.availCreditDelta > 0 ? 'sim-delta-good' : sim.availCreditDelta < 0 ? 'sim-delta-bad' : ''}`}>
-              {deltaLabel(sim.availCreditDelta)}
-            </div>
-          </div>
+          return (
+            <div className="sim-kpi-row">
+              {dealerKpis.map(k => (
+                <SimKpiCard key={k.heading} {...k} />
+              ))}
 
-          {/* Held-Order Impact */}
-          <div className="sim-kpi-cell">
-            <div className="sim-kpi-heading">Held-Order Impact</div>
-            <div className="sim-kpi-values">
-              <span className="sim-kpi-old">{fmtM(base.heldValue)}</span>
-              <span className="sim-kpi-arrow">→</span>
-              <span className="sim-kpi-new">{fmtM(sim.newHeldValue)}</span>
+              {/* Release Eligibility uses custom content via children */}
+              <SimKpiCard heading="Release Eligibility">
+                <div className="sim-kpi-eligibility">
+                  {sim.canRelease
+                    ? <span className="sim-badge-release">Release eligible</span>
+                    : <span className="sim-badge-hold">Hold required</span>
+                  }
+                </div>
+                <div className="sim-kpi-policy">Policy ref: {base.policyRef}</div>
+              </SimKpiCard>
             </div>
-            <div className={`sim-kpi-delta ${sim.heldDelta < 0 ? 'sim-delta-good' : ''}`}>
-              {deltaLabel(sim.heldDelta)}
-            </div>
-          </div>
-
-          {/* Release Eligibility */}
-          <div className="sim-kpi-cell">
-            <div className="sim-kpi-heading">Release Eligibility</div>
-            <div className="sim-kpi-eligibility">
-              {sim.canRelease
-                ? <span className="sim-badge-release">Release eligible</span>
-                : <span className="sim-badge-hold">Hold required</span>
-              }
-            </div>
-            <div className="sim-kpi-policy">Policy ref: {base.policyRef}</div>
-          </div>
-        </div>
+          );
+        })()}
       </div>
 
       {/* Disclaimer */}
@@ -248,7 +211,8 @@ function PolicyTab() {
       availDelta:    newAvail    - baseAvail,
       heldDelta:     newHeld     - portfolioBaseline.heldValue,
     };
-  }, [segment, utilizationCap, slaHours, agingTrigger, payThreshold]);
+  // agingTrigger and payThreshold are not used in the formula — omitted.
+  }, [segment, utilizationCap, slaHours]);
 
   return (
     <>
@@ -256,58 +220,46 @@ function PolicyTab() {
         <div className="sim-section-title">Inputs</div>
         <div className="sim-inputs-grid">
 
-          {/* Segment */}
-          <div className="sim-input-group sim-span-2">
-            <div className="sim-input-label">Portfolio Segment</div>
-            <div className="sim-pill-row">
-              {SEGMENTS.map(s => (
-                <button key={s} className={`sim-pill-btn ${segment === s ? 'sim-pill-active' : ''}`}
-                  onClick={() => setSegment(s)}>{s}</button>
-              ))}
-            </div>
-          </div>
+          <PillGroup
+            label="Portfolio Segment"
+            options={SEGMENTS}
+            value={segment}
+            onChange={setSegment}
+            span={2}
+          />
 
-          {/* Utilization cap */}
-          <div className="sim-input-group sim-span-2">
-            <div className="sim-input-label-row">
-              <span>Credit utilisation cap ({utilizationCap}%)</span>
-              <span className="sim-current-label">Current policy: 85%</span>
-            </div>
-            <input type="range" min={50} max={100} step={1} value={utilizationCap}
-              onChange={e => setUtilizationCap(Number(e.target.value))} className="sim-slider" />
-          </div>
+          <RangeInput
+            label="Credit utilisation cap"
+            value={utilizationCap}
+            min={50} max={100}
+            currentLabel="Current policy: 85%"
+            onChange={setUtilizationCap}
+          />
 
-          {/* SLA hours */}
-          <div className="sim-input-group">
-            <div className="sim-input-label">SLA Target Hours</div>
-            <div className="sim-pill-row">
-              {SLA_OPTIONS.map(h => (
-                <button key={h} className={`sim-pill-btn ${slaHours === h ? 'sim-pill-active' : ''}`}
-                  onClick={() => setSlaHours(h)}>{h}h</button>
-              ))}
-            </div>
-          </div>
+          <PillGroup
+            label="SLA Target Hours"
+            options={SLA_OPTIONS}
+            value={slaHours}
+            formatOption={h => `${h}h`}
+            onChange={setSlaHours}
+          />
 
-          {/* Aging trigger */}
-          <div className="sim-input-group">
-            <div className="sim-input-label">AR Aging Hold Trigger</div>
-            <div className="sim-pill-row">
-              {[30, 60, 90].map(d => (
-                <button key={d} className={`sim-pill-btn ${agingTrigger === d ? 'sim-pill-active' : ''}`}
-                  onClick={() => setAgingTrigger(d)}>{d}+ days</button>
-              ))}
-            </div>
-          </div>
+          <PillGroup
+            label="AR Aging Hold Trigger"
+            options={[30, 60, 90]}
+            value={agingTrigger}
+            formatOption={d => `${d}+ days`}
+            onChange={setAgingTrigger}
+          />
 
-          {/* Payment threshold */}
-          <div className="sim-input-group sim-span-2">
-            <div className="sim-input-label-row">
-              <span>Auto-release payment threshold ({fmtM(payThreshold)})</span>
-              <span className="sim-current-label">Current: {fmtM(10000)}</span>
-            </div>
-            <input type="range" min={0} max={50000} step={1000} value={payThreshold}
-              onChange={e => setPayThreshold(Number(e.target.value))} className="sim-slider" />
-          </div>
+          <RangeInput
+            label="Auto-release payment threshold"
+            value={payThreshold}
+            min={0} max={50000} step={1000}
+            formatValue={fmtM}
+            currentLabel={`Current: ${fmtM(10000)}`}
+            onChange={setPayThreshold}
+          />
 
           <div className="sim-span-2 sim-reset-row">
             <button className="btn-outline sim-reset-btn" onClick={reset}>Reset</button>
@@ -317,52 +269,45 @@ function PolicyTab() {
 
       <div className="sim-card">
         <div className="sim-section-title">Impact preview</div>
-        <div className="sim-kpi-row">
-          <div className="sim-kpi-cell">
-            <div className="sim-kpi-heading">Total Exposure</div>
-            <div className="sim-kpi-values">
-              <span className="sim-kpi-old">{fmtM(portfolioBaseline.totalExposure)}</span>
-              <span className="sim-kpi-arrow">→</span>
-              <span className="sim-kpi-new">{fmtM(sim.newExposure)}</span>
+
+        {(() => {
+          const policyKpis = [
+            {
+              heading:    'Total Exposure',
+              oldValue:   fmtM(portfolioBaseline.totalExposure),
+              newValue:   fmtM(sim.newExposure),
+              delta:      deltaLabel(sim.exposureDelta),
+              deltaClass: sim.exposureDelta < 0 ? 'sim-delta-good' : '',
+            },
+            {
+              heading:    'Available Credit',
+              oldValue:   fmtM(sim.baseAvail),
+              newValue:   fmtM(sim.newAvail),
+              delta:      deltaLabel(sim.availDelta),
+              deltaClass: sim.availDelta > 0 ? 'sim-delta-good' : '',
+            },
+            {
+              heading:    'Held-Order Impact',
+              oldValue:   fmtM(portfolioBaseline.heldValue),
+              newValue:   fmtM(sim.newHeld),
+              delta:      deltaLabel(sim.heldDelta),
+              deltaClass: sim.heldDelta < 0 ? 'sim-delta-good' : '',
+            },
+            {
+              heading:    'Orders Released',
+              oldValue:   String(portfolioBaseline.orders),
+              newValue:   String(portfolioBaseline.orders - sim.releaseOrders + sim.newHolds),
+              delta:      sim.releaseOrders > 0 ? `↓ ${sim.releaseOrders} held` : '= no change',
+              deltaClass: sim.releaseOrders > 0 ? 'sim-delta-good' : '',
+            },
+          ];
+
+          return (
+            <div className="sim-kpi-row">
+              {policyKpis.map(k => <SimKpiCard key={k.heading} {...k} />)}
             </div>
-            <div className={`sim-kpi-delta ${sim.exposureDelta < 0 ? 'sim-delta-good' : ''}`}>
-              {deltaLabel(sim.exposureDelta)}
-            </div>
-          </div>
-          <div className="sim-kpi-cell">
-            <div className="sim-kpi-heading">Available Credit</div>
-            <div className="sim-kpi-values">
-              <span className="sim-kpi-old">{fmtM(sim.baseAvail)}</span>
-              <span className="sim-kpi-arrow">→</span>
-              <span className="sim-kpi-new">{fmtM(sim.newAvail)}</span>
-            </div>
-            <div className={`sim-kpi-delta ${sim.availDelta > 0 ? 'sim-delta-good' : ''}`}>
-              {deltaLabel(sim.availDelta)}
-            </div>
-          </div>
-          <div className="sim-kpi-cell">
-            <div className="sim-kpi-heading">Held-Order Impact</div>
-            <div className="sim-kpi-values">
-              <span className="sim-kpi-old">{fmtM(portfolioBaseline.heldValue)}</span>
-              <span className="sim-kpi-arrow">→</span>
-              <span className="sim-kpi-new">{fmtM(sim.newHeld)}</span>
-            </div>
-            <div className={`sim-kpi-delta ${sim.heldDelta < 0 ? 'sim-delta-good' : ''}`}>
-              {deltaLabel(sim.heldDelta)}
-            </div>
-          </div>
-          <div className="sim-kpi-cell">
-            <div className="sim-kpi-heading">Orders Released</div>
-            <div className="sim-kpi-values">
-              <span className="sim-kpi-old">{portfolioBaseline.orders}</span>
-              <span className="sim-kpi-arrow">→</span>
-              <span className="sim-kpi-new">{portfolioBaseline.orders - sim.releaseOrders + sim.newHolds}</span>
-            </div>
-            <div className={`sim-kpi-delta ${sim.releaseOrders > 0 ? 'sim-delta-good' : ''}`}>
-              {sim.releaseOrders > 0 ? `↓ ${sim.releaseOrders} held` : '= no change'}
-            </div>
-          </div>
-        </div>
+          );
+        })()}
       </div>
 
       <div className="sim-disclaimer-text">
@@ -376,7 +321,7 @@ function PolicyTab() {
 
 export default function SimulationStudio() {
   const [activeTab, setActiveTab] = useState('dealer');
-
+  const ActiveTab = SIM_TABS.find(tab => tab.key === activeTab)?.Component;
   return (
     <div className="dashboard">
 
@@ -387,12 +332,20 @@ export default function SimulationStudio() {
       />
 
       {/* Tabs */}
-      <div className="sim-tabbar">
-        <button className={`sim-tab-btn ${activeTab === 'dealer' ? 'sim-tab-active' : ''}`}
-          onClick={() => setActiveTab('dealer')}>Dealer-Level</button>
-        <button className={`sim-tab-btn ${activeTab === 'policy' ? 'sim-tab-active' : ''}`}
-          onClick={() => setActiveTab('policy')}>Policy-Level</button>
-      </div>
+
+<div className="sim-tabbar">
+  {SIM_TABS.map(tab => (
+    <button
+      key={tab.key}
+      className={`sim-tab-btn ${activeTab === tab.key ? 'sim-tab-active' : ''}`}
+      onClick={() => setActiveTab(tab.key)}
+    >
+      {tab.label}
+    </button>
+  ))}
+</div>
+
+{ActiveTab && <ActiveTab />}
 
       {activeTab === 'dealer' && <DealerTab />}
       {activeTab === 'policy' && <PolicyTab />}

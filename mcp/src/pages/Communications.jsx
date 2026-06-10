@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { MessageSquare, Mail, Phone, ArrowUpRight, ArrowDownLeft, Search } from 'lucide-react';
+import { MessageSquare, Mail, Phone, Search } from 'lucide-react';
+import DirectionIcon from '../common/DirectionIcon';
 import '../App.css';
 
 // ── Timeline data ─────────────────────────────────────────────────────────────
@@ -114,42 +115,86 @@ const STATUS_STYLE = {
   'No Answer':      { bg: '#fff7ed', color: '#c2410c' },
 };
 
+// ── Template column config ────────────────────────────────────────────────────
+// Each entry drives one <th> and the matching <td> in the Templates table.
+// render(value, row) → ReactNode; if omitted, row[key] is rendered as plain text.
+// thClass / tdClass add extra classes on top of the base comm-tpl-th / comm-tpl-td.
+
+const templateColumns = [
+  {
+    label: 'Template',
+    render: (_, t) => (
+      <>
+        <div className="comm-tpl-name">{t.name}</div>
+        <div className="comm-tpl-code">{t.code}</div>
+      </>
+    ),
+  },
+  {
+    label: 'Channel',
+    render: (_, t) => <ChannelBadge channel={t.channel} />,
+  },
+  { label: 'Case Type',     key: 'caseType',      tdClass: 'comm-tpl-text' },
+  { label: 'Stage',         key: 'stage',         tdClass: 'comm-tpl-text' },
+  { label: 'Audience',      key: 'audience',      tdClass: 'comm-tpl-text' },
+  {
+    label: 'Effectiveness',
+    key: 'effectiveness',
+    render: val => `${val}%`,
+    thClass: 'comm-tpl-th-right',
+    tdClass: 'comm-tpl-eff',
+  },
+];
+
 // ── Sub-components ────────────────────────────────────────────────────────────
 
+const CHANNEL_AVATAR = {
+  Phone: { Icon: Phone, className: 'comm-avatar-blue' },
+  'Portal Message': { Icon: MessageSquare, className: 'comm-avatar-blue' },
+  Email: { Icon: Mail, className: 'comm-avatar-gray' },
+};
+
 function ChannelAvatar({ channel }) {
-  if (channel === 'Phone') {
-    return <div className="comm-avatar comm-avatar-blue"><Phone size={15} /></div>;
-  }
-  if (channel === 'Portal Message') {
-    return <div className="comm-avatar comm-avatar-blue"><MessageSquare size={15} /></div>;
-  }
-  return <div className="comm-avatar comm-avatar-gray"><Mail size={15} /></div>;
+  const { Icon, className } = CHANNEL_AVATAR[channel] || CHANNEL_AVATAR.Email;
+
+  return (
+    <div className={`comm-avatar ${className}`}>
+      <Icon size={15} />
+    </div>
+  );
 }
+const CHANNEL_BADGE_CLASS = {
+  Email: 'comm-ch-email',
+  Phone: 'comm-ch-phone',
+  Letter: 'comm-ch-letter',
+};
 
 function ChannelBadge({ channel }) {
-  const cls = channel === 'Email'  ? 'comm-ch-email'
-            : channel === 'Phone'  ? 'comm-ch-phone'
-            : 'comm-ch-letter';
-  return <span className={`comm-ch-badge ${cls}`}>{channel}</span>;
+  return (
+    <span className={`comm-ch-badge ${CHANNEL_BADGE_CLASS[channel] || 'comm-ch-letter'}`}>
+      {channel}
+    </span>
+  );
 }
-
 // ── Page ─────────────────────────────────────────────────────────────────────
 
 export default function Communications() {
   const [activeTab, setActiveTab] = useState('timeline');
   const [search,    setSearch]    = useState('');
 
-  const filtered = useMemo(() => {
-    const q = search.toLowerCase();
-    if (!q) return timelineData;
-    return timelineData.filter(item =>
-      item.title.toLowerCase().includes(q) ||
-      item.body.toLowerCase().includes(q) ||
-      item.scopeId.toLowerCase().includes(q) ||
-      item.agent.toLowerCase().includes(q) ||
-      item.scope.toLowerCase().includes(q)
-    );
-  }, [search]);
+const SEARCH_FIELDS = ['title', 'body', 'scopeId', 'agent', 'scope'];
+
+const filtered = useMemo(() => {
+  const q = search.trim().toLowerCase();
+
+  if (!q) return timelineData;
+
+  return timelineData.filter(item =>
+    SEARCH_FIELDS.some(field =>
+      String(item[field]).toLowerCase().includes(q)
+    )
+  );
+}, [search]);
 
   return (
     <div className="dashboard">
@@ -212,10 +257,7 @@ export default function Communications() {
                     <div className="comm-agent">{item.agent}</div>
                   </div>
                   <div className="comm-meta">
-                    {item.direction === 'out'
-                      ? <ArrowUpRight  size={13} className="comm-dir-out" />
-                      : <ArrowDownLeft size={13} className="comm-dir-in"  />
-                    }
+                    <DirectionIcon direction={item.direction} />
                     <span className="comm-time">{item.timestamp}</span>
                   </div>
                 </div>
@@ -236,28 +278,25 @@ export default function Communications() {
           <table className="comm-tpl-table">
             <thead>
               <tr>
-                <th className="comm-tpl-th">Template</th>
-                <th className="comm-tpl-th">Channel</th>
-                <th className="comm-tpl-th">Case Type</th>
-                <th className="comm-tpl-th">Stage</th>
-                <th className="comm-tpl-th">Audience</th>
-                <th className="comm-tpl-th comm-tpl-th-right">Effectiveness</th>
+                {templateColumns.map((col, i) => (
+                  <th key={i} className={['comm-tpl-th', col.thClass].filter(Boolean).join(' ')}>
+                    {col.label}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {templates.map(t => (
                 <tr key={t.id} className="comm-tpl-tr">
-                  <td className="comm-tpl-td">
-                    <div className="comm-tpl-name">{t.name}</div>
-                    <div className="comm-tpl-code">{t.code}</div>
-                  </td>
-                  <td className="comm-tpl-td">
-                    <ChannelBadge channel={t.channel} />
-                  </td>
-                  <td className="comm-tpl-td comm-tpl-text">{t.caseType}</td>
-                  <td className="comm-tpl-td comm-tpl-text">{t.stage}</td>
-                  <td className="comm-tpl-td comm-tpl-text">{t.audience}</td>
-                  <td className="comm-tpl-td comm-tpl-eff">{t.effectiveness}%</td>
+                  {templateColumns.map((col, ci) => {
+                    const val     = col.key ? t[col.key] : undefined;
+                    const content = col.render ? col.render(val, t) : val;
+                    return (
+                      <td key={ci} className={['comm-tpl-td', col.tdClass].filter(Boolean).join(' ')}>
+                        {content}
+                      </td>
+                    );
+                  })}
                 </tr>
               ))}
             </tbody>
