@@ -210,18 +210,33 @@ export default function ZendeskCoordination() {
       </div>
 
       {/* ── Tab bar ── */}
-      <div className="zd-tabbar">
-        {TABS.map(({ key, label, Icon }) => (
-          <button
-            key={key}
-            className={`zd-tab-btn ${activeTab === key ? 'zd-tab-active' : ''}`}
-            onClick={() => { setActiveTab(key); setSearch(''); }}
-          >
-            {Icon && <Icon size={12} />}
-            {label}
-          </button>
-        ))}
+      <div className="zd-tabbar-wrap">
+        <div className="zd-tabbar">
+          {TABS.map(({ key, label, Icon }) => (
+            <button
+              key={key}
+              className={`zd-tab-btn ${activeTab === key ? 'zd-tab-active' : ''}`}
+              onClick={() => { setActiveTab(key); setSearch(''); }}
+            >
+              {Icon && <Icon size={12} />}
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {/* ── Search bar (tickets only) ── */}
+      {activeTab === 'tickets' && (
+        <div className="zd-search-wrap">
+          <Search size={13} className="zd-search-icon" />
+          <input
+            className="zd-search-input"
+            placeholder="Search by ticket ID, subject, dealer..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </div>
+      )}
 
       {/* ── Tickets tab ── */}
       {activeTab === 'tickets' && (
@@ -230,9 +245,6 @@ export default function ZendeskCoordination() {
           rows={filteredTickets}
           rowKey="id"
           emptyMessage="No tickets match your search."
-          search={search}
-          onSearch={setSearch}
-          searchPlaceholder="Search by ticket ID, subject, dealer..."
           classes={ZD_CLASSES}
         />
       )}

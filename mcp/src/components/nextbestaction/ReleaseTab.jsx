@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Package } from 'lucide-react';
 
 const releaseOrders = [
   {
@@ -73,10 +73,18 @@ const ReleaseTab = () => {
   return (
     <div className="nba-tab-content">
       <div className="nba-section-card">
-        <div className="nba-section-header">
-          <div className="nba-section-title">Highest Release-Unlock Opportunity</div>
-          <div className="nba-section-sub">
-            Held orders by revenue impact. Open the order to see exactly what would unlock release.
+        <div className="nba-release-header">
+          <div className="nba-release-header-left">
+            <div className="nba-section-title-row">
+              <Package size={16} color="#2662d9" />
+              <div className="nba-section-title">Release Unlock Explorer</div>
+            </div>
+            <div className="nba-section-sub">
+              Held orders ranked by revenue unlock potential. Open one to see what would clear it.
+            </div>
+          </div>
+          <div className="nba-release-blocked-badge">
+            $4.6M<br />total blocked
           </div>
         </div>
         <div className="nba-dealer-list">

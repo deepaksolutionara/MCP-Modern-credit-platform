@@ -1,6 +1,6 @@
 import React, { useState, Suspense } from 'react';
 import '../App.css';
-import { Sparkles, CreditCard, Lock, Scale, Clock, User } from 'lucide-react';
+import { Sparkles, Banknote, Package, MessageSquareWarning, Timer, Users } from 'lucide-react';
 import PageHeader from '../common/PageHeader';
 
 const CashTab = React.lazy(() => import('../components/nextbestaction/CashTab'));
@@ -14,33 +14,33 @@ const tabs = [
   {
     key: 'cash',
     label: 'Cash',
-    Icon: CreditCard,
+    Icon: Banknote,
     Component: CashTab,
     props: { cashRecovery },
   },
   {
     key: 'release',
     label: 'Release',
-    Icon: Lock,
+    Icon: Package,
     Component: ReleaseTab,
   },
   {
     key: 'disputes',
     label: 'Disputes',
-    Icon: Scale,
+    Icon: MessageSquareWarning,
     Component: DisputesTab,
   },
   {
     key: 'sla',
     label: 'SLA',
-    Icon: Clock,
+    Icon: Timer,
     Component: SLATab,
     props: { slaCases },
   },
   {
     key: 'workload',
     label: 'Workload',
-    Icon: User,
+    Icon: Users,
     Component: WorkloadTab,
   },
 ];
@@ -57,7 +57,8 @@ const ActiveComponent = activeTabConfig?.Component;
     <div className="dashboard">
 
       <PageHeader
-        icon={<Sparkles size={18} color="#3b82f6" />}
+        icon={<Sparkles size={18} color="#2662d9" />}
+        iconBg="transparent"
         title="Next-Best-Action Hub"
         subtitle="Prioritized worklists that put cash recovery, release unlock, and SLA-critical actions first."
       />
