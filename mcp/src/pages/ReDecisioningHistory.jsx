@@ -14,8 +14,7 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import { Activity, RefreshCw, Clock, FileText, Download } from 'lucide-react';
-import * as XLSX from 'xlsx';
+import { Activity, RefreshCw, Clock } from 'lucide-react';
 import PageHeader from '../common/PageHeader';
 import '../App.css';
 
@@ -33,11 +32,7 @@ const kpis = [
 // ── Trigger filter options ────────────────────────────────────────────────────
 // Shown as pill buttons above the Events table.
 
-const FILTERS = [
-  'All', 'AR balance change', 'Payment received', 'Dispute opened',
-  'Dispute resolved', 'Return processed', 'Order modified',
-  'Credit policy change', 'Ship date changed',
-];
+const FILTERS = ['All'];
 
 // ── Events dataset ────────────────────────────────────────────────────────────
 // Empty until connected to a live API. Export still works — it will produce a
@@ -48,34 +43,6 @@ const rdEvents = [];
 // ── Upstream dataset ──────────────────────────────────────────────────────────
 
 const upstreamEvents = [];
-
-// ── Column maps ───────────────────────────────────────────────────────────────
-// Each map defines the export column order and human-readable header labels.
-// Having two separate maps keeps Events and Upstream exports independent.
-
-const EVENT_COLUMNS = [
-  { key: 'id',            label: 'Event ID'       },
-  { key: 'orderId',       label: 'Order #'        },
-  { key: 'dealer',        label: 'Dealer'         },
-  { key: 'trigger',       label: 'Trigger'        },
-  { key: 'prior',         label: 'Prior Decision' },
-  { key: 'outcome',       label: 'New Decision'   },
-  { key: 'exposureDelta', label: 'Exposure Δ'     },
-  { key: 'source',        label: 'Source'         },
-  { key: 'when',          label: 'When'           },
-];
-
-const UPSTREAM_COLUMNS = [
-  { key: 'id',           label: 'Event ID'      },
-  { key: 'orderId',      label: 'Order #'       },
-  { key: 'dealer',       label: 'Dealer'        },
-  { key: 'changeType',   label: 'Change Type'   },
-  { key: 'field',        label: 'Field'         },
-  { key: 'from',         label: 'From'          },
-  { key: 'to',           label: 'To'            },
-  { key: 'creditImpact', label: 'Credit Impact' },
-  { key: 'when',         label: 'When'          },
-];
 
 // ── Style maps ────────────────────────────────────────────────────────────────
 
@@ -95,63 +62,10 @@ const DELTA_CLS = {
 const IMPACT_CLS = v =>
   v.startsWith('+') ? 'rdh-delta-red' : v === '$0K' ? 'rdh-delta-gray' : 'rdh-delta-green';
 
-// ── Timestamp helper ──────────────────────────────────────────────────────────
-// Produces a compact, filename-safe string (no colons or slashes).
-
-function fileTimestamp() {
-  const now = new Date();
-  const pad = n => String(n).padStart(2, '0');
-  return `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}`;
-}
-
-// ── Export: CSV ───────────────────────────────────────────────────────────────
-// Generic CSV exporter. Accepts the rows to export, the column map to use, and
-// a base filename. Always exports whatever rows are passed in — callers are
-// responsible for passing the correctly filtered set.
-
-function exportToCSV(rows, columns, baseName) {
-  const headers  = columns.map(c => c.label);
-  const dataRows = rows.map(row =>
-    columns.map(({ key }) => {
-      const val = row[key] ?? '';
-      return `"${String(val).replace(/"/g, '""')}"`;
-    }).join(',')
-  );
-
-  const csv  = [headers.join(','), ...dataRows].join('\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url  = URL.createObjectURL(blob);
-
-  const link = document.createElement('a');
-  link.href     = url;
-  link.download = `${baseName}_${fileTimestamp()}.csv`;
-  link.click();
-
-  URL.revokeObjectURL(url);
-}
-
-// ── Export: XLSX ──────────────────────────────────────────────────────────────
-// Generic XLSX exporter. Same signature as exportToCSV for consistency.
-
-function exportToXLSX(rows, columns, baseName, sheetName) {
-  const sheetData = [
-    columns.map(c => c.label),
-    ...rows.map(row => columns.map(({ key }) => row[key] ?? '')),
-  ];
-
-  const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
-  const workbook  = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
-
-  XLSX.writeFile(workbook, `${baseName}_${fileTimestamp()}.xlsx`);
-}
-
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 /**
  * EventsTab — renders the trigger-filtered re-decisioning events table.
- * Receives the already-filtered rows from the parent so the parent can also
- * pass those same rows to the export handlers.
  */
 function EventsTab({ rows }) {
   return (
@@ -275,24 +189,6 @@ export default function ReDecisioningHistory() {
     [activeFilter]
   );
 
-  // Dispatches the correct export based on which tab is currently visible.
-  // Events tab  → exports filteredEvents (respects trigger-filter pill).
-  // Upstream tab → exports all upstreamEvents (no filter exists there).
-  function handleCSV() {
-    if (activeTab === 'events') {
-      exportToCSV(filteredEvents, EVENT_COLUMNS, 'redecisioning_history_events');
-    } else {
-      exportToCSV(upstreamEvents, UPSTREAM_COLUMNS, 'redecisioning_history_upstream');
-    }
-  }
-
-  function handleXLSX() {
-    if (activeTab === 'events') {
-      exportToXLSX(filteredEvents, EVENT_COLUMNS, 'redecisioning_history_events', 'Events');
-    } else {
-      exportToXLSX(upstreamEvents, UPSTREAM_COLUMNS, 'redecisioning_history_upstream', 'Upstream Changes');
-    }
-  }
 
   return (
     <div className="dashboard">
@@ -303,15 +199,9 @@ export default function ReDecisioningHistory() {
         title="Re-Decisioning History"
         subtitle="DB-backed audit of every recalculation triggered by AR changes, disputes, returns, payments, policy updates, and ship-date changes."
         actions={
-          <div className="chr-export-btns">
-            {/* Exports the currently visible tab's filtered data */}
-            <button onClick={handleCSV}  className="chr-btn-csv">
-              <FileText size={13} /> CSV
-            </button>
-            <button onClick={handleXLSX} className="chr-btn-xlsx">
-              <Download size={13} /> XLSX
-            </button>
-          </div>
+          <button className="rdh-refresh-btn">
+            <RefreshCw size={13} /> Refresh
+          </button>
         }
       />
 
@@ -326,15 +216,17 @@ export default function ReDecisioningHistory() {
       </div>
 
       {/* ── Tab bar ─────────────────────────────────────────────────────── */}
-      <div className="rdh-tabs">
-        <button
-          className={`rdh-tab${activeTab === 'events' ? ' rdh-tab-active' : ''}`}
-          onClick={() => setActiveTab('events')}
-        >Re-Decisioning Events</button>
-        <button
-          className={`rdh-tab${activeTab === 'upstream' ? ' rdh-tab-active' : ''}`}
-          onClick={() => setActiveTab('upstream')}
-        >Upstream Order Changes</button>
+      <div className="rdh-tabbar-wrap">
+        <div className="rdh-tabs">
+          <button
+            className={`rdh-tab${activeTab === 'events' ? ' rdh-tab-active' : ''}`}
+            onClick={() => setActiveTab('events')}
+          >Re-Decisioning Events</button>
+          <button
+            className={`rdh-tab${activeTab === 'upstream' ? ' rdh-tab-active' : ''}`}
+            onClick={() => setActiveTab('upstream')}
+          >Upstream Order Changes</button>
+        </div>
       </div>
 
       {/* ── Trigger filter pills (Events tab only) ───────────────────────── */}

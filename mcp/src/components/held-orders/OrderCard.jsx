@@ -1,5 +1,5 @@
 import React from 'react'
-import { Package, Clock, CheckCircle, ArrowUp, Zap, Bell, History } from 'lucide-react';
+import { Package, Clock, CheckCircle, ArrowUp, ShieldCheck, Bell, History } from 'lucide-react';
 import { InvoiceBadge,DisputeBadge,AgingBadge } from '../../pages/HeldOrders';
 
 function OrderCard({ order }) {
@@ -129,7 +129,7 @@ function OrderCard({ order }) {
       {/* ── Trigger Resolution Event ── */}
       <div className="ho-section">
         <div className="ho-section-header">
-          <Zap size={14} className="ho-section-icon" />
+          <ShieldCheck size={14} className="ho-section-icon" />
           <span className="ho-section-title">Trigger Resolution Event</span>
         </div>
         <div className="ho-resolution-btns">

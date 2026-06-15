@@ -4,7 +4,7 @@ import PageHeader from '../common/PageHeader';
 import { Link } from 'react-router-dom';
 import {
   Briefcase, Package, Clock, AlertTriangle, CheckCircle2,
-  ArrowUpRight, RefreshCw, ShieldAlert, Activity, Settings2, Zap, Timer,
+  ArrowUpRight, RefreshCw, ShieldAlert, Activity, Settings2, ShieldCheck, Timer,
 } from 'lucide-react';
 import Announcement from '../common/Announcement';
 import Kpicard from '../common/Kpicard';
@@ -180,7 +180,7 @@ function Dashboard() {
 
         {/* Auto-Releases */}
         <section className="card" aria-label="Recent Auto-Releases">
-          <SectionHeader Icon={Zap} title="Recent Auto-Releases" />
+          <SectionHeader Icon={ShieldCheck} title="Recent Auto-Releases" />
           {autoReleases.map(item => (
             <AutoReleaseItem key={item.orderId} {...item} />
           ))}

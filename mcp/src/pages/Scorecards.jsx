@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart2, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { ChartColumn, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import PageHeader from '../common/PageHeader';
 import '../App.css';
 import { sections } from '../data/scorecardsData';
@@ -67,7 +67,7 @@ export default function Scorecards() {
     <div className="dashboard">
 
       <PageHeader
-        icon={<BarChart2 size={20} color="#3b82f6" />}
+        icon={<ChartColumn size={20} color="#3b82f6" />}
         title="Operations Scorecards"
         subtitle="Embedded management visibility across collector productivity, dispute cycle time, PTP outcomes, auto-release, recovery, held-order revenue, and rule changes."
       />
