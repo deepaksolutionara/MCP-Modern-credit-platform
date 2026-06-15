@@ -1,15 +1,15 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  LayoutDashboard, ListTodo, Briefcase, Archive,
+  LayoutDashboard, ListTodo, Briefcase, Archive, Inbox, Package,
   Sparkles, KeyRound, FlaskConical, MessageSquare, BarChart2,
-  RefreshCw, Eye, Mail, Globe,
+  RefreshCw, Eye, Mail, Globe, Send, LifeBuoy, ChartColumn,
   Layers, ExternalLink, BookOpen, TrendingDown,
   Store, ShoppingCart, Receipt, Scale, CheckSquare,
   AlertTriangle, Megaphone, Bell, History, TrendingUp,
   BookMarked,
   UserPlus, Users, Activity, FileText,
-  Shield, Ban, FileCheck, Radio, Terminal, Share2,
+  Shield, ShieldCheck, Ban, FileCheck, Radio, Terminal, Share2,
   ChevronDown, Zap, GitBranch,
 } from 'lucide-react';
 import '../App.css';
@@ -19,13 +19,13 @@ const navGroups = [
     label: 'Operations',
     items: [
       { Icon: LayoutDashboard, label: 'Dashboard',   to: '/' },
-      { Icon: ListTodo,        label: 'My Work Queue', to: '/queues' },
+      { Icon: Inbox,           label: 'My Work Queue', to: '/queues' },
       { Icon: Users,           label: 'Customers',   to: '/customers' },
       { Icon: Briefcase,       label: 'Cases',       to: '/cases' },
-      { Icon: Archive,         label: 'Held Orders', to: '/held-orders' },
+      { Icon: Package,         label: 'Held Orders', to: '/held-orders' },
       { Icon: AlertTriangle, label: 'SLA Risk Queue',  to: '/sla-risk'      },
-      { Icon: Zap,        label: 'Auto-Released',         to: '/auto-released'  },
-      { Icon: GitBranch,  label: 'Re-Decisioning Events', to: '/re-decisioning' },
+      { Icon: ShieldCheck, label: 'Auto-Released',         to: '/auto-released'  },
+      { Icon: RefreshCw,   label: 'Re-Decisioning Events', to: '/re-decisioning' },
       { Icon: FileText,      label: 'Credit Hold Report',    to: '/credit-hold-report' },
     ],
     routed: true,
@@ -37,9 +37,9 @@ const navGroups = [
       { Icon: KeyRound,      label: 'Release Unlock',       to: '/release-unlock' },
       { Icon: FlaskConical,  label: 'Simulation Studio',    to: '/simulation-studio' },
       { Icon: MessageSquare, label: 'Communications',       to: '/communications' },
-      { Icon: Mail,          label: 'Communication Module', to: '/communication-module' },
-      { Icon: Globe,         label: 'Zendesk Coordination', to: '/zendesk-coordination' },
-      { Icon: BarChart2,     label: 'Scorecards'         , to: '/scorecards' },
+      { Icon: Send,          label: 'Communication Module', to: '/communication-module' },
+      { Icon: LifeBuoy,      label: 'Zendesk Coordination', to: '/zendesk-coordination' },
+      { Icon: ChartColumn,   label: 'Scorecards'         , to: '/scorecards' },
     ],
   },
   {

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import {
-  Globe, Clock, CheckCircle2, ExternalLink,
+  LifeBuoy, Clock, CheckCircle2, ExternalLink,
   Search, RefreshCw,
 } from 'lucide-react';
 import DataTable from '../common/DataTable';
@@ -186,7 +186,7 @@ export default function ZendeskCoordination() {
 
       {/* ── Header ── */}
       <div className="zd-page-header">
-        <div className="zd-page-icon"><Globe size={20} /></div>
+        <div className="zd-page-icon"><LifeBuoy size={20} /></div>
         <div>
           <div className="zd-page-title">Zendesk Coordination</div>
           <div className="zd-page-sub">

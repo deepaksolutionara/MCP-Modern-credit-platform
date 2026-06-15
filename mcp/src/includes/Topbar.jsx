@@ -11,6 +11,7 @@
  */
 
 import React from 'react';
+import { PanelLeft } from 'lucide-react';
 import '../App.css';
 import Dropdown from '../common/Dropdown';
 
@@ -25,12 +26,7 @@ export default function Topbar({ onToggleSidebar }) {
         aria-controls="sidebar"
         onClick={onToggleSidebar}
       >
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-          <rect x="1" y="1" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
-          <rect x="10" y="1" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
-          <rect x="1" y="10" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
-          <rect x="10" y="10" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
-        </svg>
+        <PanelLeft size={18} aria-hidden="true" />
       </button>
 
       {/* Global search — WCAG 1.3.1 role="search" + labelled input */}

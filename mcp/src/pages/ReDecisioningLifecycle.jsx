@@ -326,15 +326,17 @@ export default function ReDecisioningLifecycle() {
       </div>
 
       {/* Tabs */}
-      <div className="rdc-tabs">
-        <button
-          className={`rdc-tab${activeTab === 'events' ? ' rdc-tab-active' : ''}`}
-          onClick={() => setActiveTab('events')}
-        >Re-Decisioning Events</button>
-        <button
-          className={`rdc-tab${activeTab === 'jde' ? ' rdc-tab-active' : ''}`}
-          onClick={() => setActiveTab('jde')}
-        >JDE Hold/Release Log</button>
+      <div className="rdc-tabbar-wrap">
+        <div className="rdc-tabs">
+          <button
+            className={`rdc-tab${activeTab === 'events' ? ' rdc-tab-active' : ''}`}
+            onClick={() => setActiveTab('events')}
+          >Re-Decisioning Events</button>
+          <button
+            className={`rdc-tab${activeTab === 'jde' ? ' rdc-tab-active' : ''}`}
+            onClick={() => setActiveTab('jde')}
+          >JDE Hold/Release Log</button>
+        </div>
       </div>
 
       {/* Filter pills */}
