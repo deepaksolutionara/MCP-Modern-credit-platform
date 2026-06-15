@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { MessageSquare, Mail, Phone, Search } from 'lucide-react';
+import { MessagesSquare, MessageSquare, Mail, Phone, Search } from 'lucide-react';
 import DirectionIcon from '../common/DirectionIcon';
 import '../App.css';
 
@@ -107,12 +107,12 @@ const templates = [
 // ── Status badge colours ──────────────────────────────────────────────────────
 
 const STATUS_STYLE = {
-  'Delivered':      { bg: '#f0fdf4', color: '#16a34a' },
-  'Opened':         { bg: '#eff6ff', color: '#2563eb' },
-  'Refused':        { bg: '#fef2f2', color: '#dc2626' },
-  'Promise to Pay': { bg: '#faf5ff', color: '#7c3aed' },
-  'Read':           { bg: '#f0fdf4', color: '#16a34a' },
-  'No Answer':      { bg: '#fff7ed', color: '#c2410c' },
+  'Delivered':      { background: '#f0fdf4', color: '#16a34a', border: '1px solid #bbf7d0' },
+  'Opened':         { background: '#eff6ff', color: '#2563eb', border: '1px solid #bfdbfe' },
+  'Refused':        { background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' },
+  'Promise to Pay': { background: '#faf5ff', color: '#7c3aed', border: '1px solid #e9d5ff' },
+  'Read':           { background: '#f0fdf4', color: '#16a34a', border: '1px solid #bbf7d0' },
+  'No Answer':      { background: '#fff7ed', color: '#c2410c', border: '1px solid #fed7aa' },
 };
 
 // ── Template column config ────────────────────────────────────────────────────
@@ -202,7 +202,7 @@ const filtered = useMemo(() => {
       {/* Header */}
       <div className="comm-page-header">
         <div className="comm-page-icon">
-          <MessageSquare size={22} />
+          <MessagesSquare size={22} />
         </div>
         <div>
           <div className="comm-page-title">Communications Timeline</div>
@@ -239,26 +239,28 @@ const filtered = useMemo(() => {
 
           <div className="comm-timeline">
             {filtered.map(item => {
-              const st = STATUS_STYLE[item.status] || { bg: '#f8fafc', color: '#64748b' };
+              const st = STATUS_STYLE[item.status] || { background: '#f8fafc', color: '#64748b', border: '1px solid #e2e8f0' };
               return (
                 <div key={item.id} className="comm-item">
                   <ChannelAvatar channel={item.channel} />
                   <div className="comm-body">
-                    <div className="comm-tags">
-                      <span className="comm-tag-channel">{item.channel}</span>
-                      <span className="comm-tag-scope">{item.scope}</span>
-                      <span className="comm-tag-id">{item.scopeId}</span>
-                      <span className="comm-tag-status" style={{ background: st.bg, color: st.color }}>
-                        {item.status}
-                      </span>
+                    <div className="comm-tags-row">
+                      <div className="comm-tags">
+                        <span className="comm-tag-channel">{item.channel}</span>
+                        <span className="comm-tag-scope">{item.scope}</span>
+                        <span className="comm-tag-id">{item.scopeId}</span>
+                        <span className="comm-tag-status" style={st}>
+                          {item.status}
+                        </span>
+                      </div>
+                      <div className="comm-meta">
+                        <DirectionIcon direction={item.direction} />
+                        <span className="comm-time">{item.timestamp}</span>
+                      </div>
                     </div>
                     <div className="comm-title">{item.title}</div>
                     <div className="comm-sub">{item.body}</div>
                     <div className="comm-agent">{item.agent}</div>
-                  </div>
-                  <div className="comm-meta">
-                    <DirectionIcon direction={item.direction} />
-                    <span className="comm-time">{item.timestamp}</span>
                   </div>
                 </div>
               );

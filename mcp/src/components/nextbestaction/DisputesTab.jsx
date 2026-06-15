@@ -24,6 +24,15 @@ const disputes = [
   },
 ];
 
+const disputeStatusBadge = {
+  'Open':                      { background: 'hsl(38 92% 50%)',          color: '#0f172a' },
+  'Active':                    { background: 'hsl(220deg 70% 50% / 80%)', color: '#fff'    },
+  'Resolved':                  { background: '#e2e8f0',                  color: '#475569' },
+  'Approved':                  { background: '#22c55e',                  color: '#0f172a' },
+  'Waiting on Internal Review':{ background: '#e2e8f0',                  color: '#475569' },
+  'Waiting on Dealer':         { background: 'hsl(38 92% 50%)',          color: '#0f172a' },
+};
+
 const resumeItems = [
   { id: 'COL-4001', dealer: 'Alpine Equipment Co',  stage: 'Pending External Referral' },
   { id: 'COL-4002', dealer: 'ProGear Distribution', stage: 'Dispute Review'            },
@@ -67,7 +76,7 @@ const DisputesTab = () => {
                   <span className="nba-dispute-sla">SLA breached</span>
                 </div>
                 <div className="nba-dispute-sub">
-                  <span className="nba-dispute-status-text">{item.status}</span>
+                  <span className="nba-badge-status">{item.status}</span>
                   <span className="nba-dispute-owner"> · owner {item.owner}</span>
                 </div>
               </div>

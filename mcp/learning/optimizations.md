@@ -98,7 +98,7 @@ LCP(largest contentful paint)  1950.36s -> 0.60s
 ## Release unlock 
 -->Use a COLUMNS array with map() to remove hard-coded table headers and cells.
 -->Keep totalBlocked memoized with useMemo() if heldOrders becomes dynamic.
--->Move fmt() into a reusable formatter utility so other components can reuse it.
+-->Move fmt() into a reusable formatter utility so other components can reuse it...
 
 ## Release unlock detail
 
@@ -106,7 +106,7 @@ LCP(largest contentful paint)  1950.36s -> 0.60s
 -->Use a contextItems array with map() for the order context section.
 -->git push origin optimized-codeMove fmt() into a shared formatCurrencyShort() utility and use stable keys like c.text.
 
-## Simulation-Studio
+## SimulationStudio
 
 -->Create reusable components like KpiCard, RangeInput, PillGroup, and SelectInput to reduce repeated JSX.
 -->Replace manual tabs and repeated KPI sections with config arrays and map().

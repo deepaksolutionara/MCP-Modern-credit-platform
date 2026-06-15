@@ -12,7 +12,7 @@
 import React, { useState, useMemo } from 'react';
 import {
   Send, Clock, AlertTriangle, Printer, CheckCircle2, FileText,
-  Inbox, LayoutGrid, Mail, Phone,
+  Inbox, Mail, Phone, MessagesSquare, Search,
 } from 'lucide-react';
 import DataTable from '../common/DataTable';
 import '../App.css';
@@ -34,7 +34,7 @@ const TABS = [
   { key: 'outbound',   label: 'Outbound Log',          Icon: Send       },
   { key: 'delivery',   label: 'Delivery Preferences',  Icon: Inbox      },
   { key: 'statements', label: 'Statements',             Icon: FileText   },
-  { key: 'templates',  label: 'Templates',              Icon: LayoutGrid },
+  { key: 'templates',  label: 'Templates',              Icon: MessagesSquare },
 ];
 
 // ── Dataset ───────────────────────────────────────────────────────────────────
@@ -194,7 +194,7 @@ export default function CommunicationModule() {
 
       {/* ── Page header ─────────────────────────────────────────────────── */}
       <div className="cmod-page-header">
-        <div className="cmod-page-icon"><Send size={20} /></div>
+        <div className="cmod-page-icon"><MessagesSquare size={20} /></div>
         <div>
           <div className="cmod-page-title">Communication Module</div>
           <div className="cmod-page-sub">
@@ -218,20 +218,35 @@ export default function CommunicationModule() {
       </div>
 
       {/* ── Tab bar ─────────────────────────────────────────────────────── */}
-      <div className="cmod-tabbar">
-        {TABS.map(({ key, label, Icon }) => (
-          <button
-            key={key}
-            className={`cmod-tab-btn ${activeTab === key ? 'cmod-tab-active' : ''}`}
-            onClick={() => { setActiveTab(key); setSearch(''); }}
-          >
-            <Icon size={13} />
-            {label}
-          </button>
-        ))}
+      <div className="cmod-tabbar-wrap">
+        <div className="cmod-tabbar">
+          {TABS.map(({ key, label, Icon }) => (
+            <button
+              key={key}
+              className={`cmod-tab-btn ${activeTab === key ? 'cmod-tab-active' : ''}`}
+              onClick={() => { setActiveTab(key); setSearch(''); }}
+            >
+              <Icon size={13} />
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* ── Tab content — all rendered via DataTable ─────────────────────── */}
+
+      {/* ── Search bar (outbound only) ───────────────────────────────── */}
+      {activeTab === 'outbound' && (
+        <div className="cmod-search-wrap">
+          <Search size={13} className="cmod-search-icon" />
+          <input
+            className="cmod-search-input"
+            placeholder="Search by dealer, recipient, subject..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </div>
+      )}
 
       {activeTab === 'outbound' && (
         <DataTable
@@ -239,9 +254,6 @@ export default function CommunicationModule() {
           rows={filteredOutbound}
           rowKey="id"
           emptyMessage="No outbound records found."
-          search={search}
-          onSearch={setSearch}
-          searchPlaceholder="Search by dealer, recipient, subject..."
         />
       )}
 

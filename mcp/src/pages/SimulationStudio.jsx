@@ -346,9 +346,6 @@ export default function SimulationStudio() {
 </div>
 
 {ActiveTab && <ActiveTab />}
-
-      {activeTab === 'dealer' && <DealerTab />}
-      {activeTab === 'policy' && <PolicyTab />}
     </div>
   );
 }

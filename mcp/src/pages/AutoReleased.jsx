@@ -119,27 +119,31 @@ export default function AutoReleased() {
 
       {/* Table card */}
       <div className="card ar-table-card">
-        <div className="ar-results-label">{filtered.length} auto-release event{filtered.length !== 1 ? 's' : ''}</div>
-        <table className="ar-table">
-          <thead>
-            <tr>
-              {COLUMNS.map((col) => {
-                return <th key={col.key}>{col.label}</th>
-              })}
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((event) => (
-              <tr key={event.audit}>
+        <div className="ar-results-label">
+          {filtered.length} auto-release event{filtered.length !== 1 ? 's' : ''}
+        </div>
+
+        {/* Scroll wrapper — lets users swipe horizontally to see all columns */}
+        <div className="ar-table-scroll">
+          <table className="ar-table">
+            <thead>
+              <tr>
                 {COLUMNS.map(col => (
-                  <td key={col.key}>
-                    {renderCell(event, col.key)}
-                  </td>
+                  <th key={col.key} scope="col">{col.label}</th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filtered.map(event => (
+                <tr key={event.audit}>
+                  {COLUMNS.map(col => (
+                    <td key={col.key}>{renderCell(event, col.key)}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
