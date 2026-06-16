@@ -167,9 +167,12 @@ const syncColumns = [
 
 // ── Page component ────────────────────────────────────────────────────────────
 
+const ZD_PAGE_SIZE = 5;
+
 export default function ZendeskCoordination() {
   const [activeTab, setActiveTab] = useState('tickets');
   const [search,    setSearch]    = useState('');
+  const [page,      setPage]      = useState(1);
 
   const SEARCH_FIELDS = ['id', 'dealer', 'subject', 'category', 'owner'];
 
@@ -180,6 +183,17 @@ export default function ZendeskCoordination() {
       SEARCH_FIELDS.some(f => String(t[f]).toLowerCase().includes(q))
     );
   }, [search]);
+
+  // Pagination helpers per active dataset
+  const activeRows = activeTab === 'tickets' ? filteredTickets
+    : activeTab === 'routing' ? routingRules
+    : syncEvents;
+  const totalPages     = Math.max(1, Math.ceil(activeRows.length / ZD_PAGE_SIZE));
+  const paginatedRows  = activeRows.slice((page - 1) * ZD_PAGE_SIZE, page * ZD_PAGE_SIZE);
+  const paginationProp = {
+    page, totalPages, totalCount: activeRows.length,
+    pageSize: ZD_PAGE_SIZE, onPageChange: setPage,
+  };
 
   return (
     <div className="dashboard">
@@ -216,7 +230,7 @@ export default function ZendeskCoordination() {
             <button
               key={key}
               className={`zd-tab-btn ${activeTab === key ? 'zd-tab-active' : ''}`}
-              onClick={() => { setActiveTab(key); setSearch(''); }}
+              onClick={() => { setActiveTab(key); setSearch(''); setPage(1); }}
             >
               {Icon && <Icon size={12} />}
               {label}
@@ -233,7 +247,7 @@ export default function ZendeskCoordination() {
             className="zd-search-input"
             placeholder="Search by ticket ID, subject, dealer..."
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={e => { setSearch(e.target.value); setPage(1); }}
           />
         </div>
       )}
@@ -242,10 +256,11 @@ export default function ZendeskCoordination() {
       {activeTab === 'tickets' && (
         <DataTable
           columns={ticketColumns}
-          rows={filteredTickets}
+          rows={paginatedRows}
           rowKey="id"
           emptyMessage="No tickets match your search."
           classes={ZD_CLASSES}
+          pagination={paginationProp}
         />
       )}
 
@@ -253,20 +268,19 @@ export default function ZendeskCoordination() {
       {activeTab === 'routing' && (
         <DataTable
           columns={routingColumns}
-          rows={routingRules}
+          rows={paginatedRows}
           rowKey="trigger"
           title="Zendesk → MCM Routing Rules"
           classes={ZD_CLASSES}
+          pagination={paginationProp}
         />
       )}
 
       {/* ── Sync Status tab ── */}
-      {/* The sync tab needs a custom header (title + Live badge), so we pass a
-          ReactNode via the `title` prop instead of a plain string. */}
       {activeTab === 'sync' && (
         <DataTable
           columns={syncColumns}
-          rows={syncEvents}
+          rows={paginatedRows}
           rowKey={(_, i) => i}
           title={
             <div className="zd-sync-header">
@@ -275,6 +289,7 @@ export default function ZendeskCoordination() {
             </div>
           }
           classes={ZD_CLASSES}
+          pagination={paginationProp}
         />
       )}
 

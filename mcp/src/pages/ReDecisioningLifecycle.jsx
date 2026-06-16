@@ -119,10 +119,20 @@ const DELTA_CLS = {
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
+const RDC_PAGE_SIZE = 5;
+
 function ReDecisioningEventsTab({ filter }) {
+  const [page, setPage] = useState(1);
+
   const rows = filter === 'All'
     ? rdEvents
     : rdEvents.filter(e => e.trigger === filter);
+
+  const totalPages    = Math.max(1, Math.ceil(rows.length / RDC_PAGE_SIZE));
+  const paginatedRows = rows.slice((page - 1) * RDC_PAGE_SIZE, page * RDC_PAGE_SIZE);
+
+  // Reset page when filter changes
+  React.useEffect(() => { setPage(1); }, [filter]);
 
   return (
     <div className="rdc-table-wrap">
@@ -140,7 +150,7 @@ function ReDecisioningEventsTab({ filter }) {
           </tr>
         </thead>
         <tbody>
-          {rows.map(e => (
+          {paginatedRows.map(e => (
             <tr key={e.id} className="rdc-tr">
               <td className="rdc-td rdc-td-event">{e.id}</td>
               <td className="rdc-td">
@@ -178,6 +188,22 @@ function ReDecisioningEventsTab({ filter }) {
           )}
         </tbody>
       </table>
+
+      {/* Pagination bar */}
+      <div className="chr-pagination">
+        <span className="chr-page-info">
+          {rows.length === 0 ? '0 rows' : `${(page - 1) * RDC_PAGE_SIZE + 1}–${Math.min(page * RDC_PAGE_SIZE, rows.length)} of ${rows.length} rows`}
+        </span>
+        <div className="chr-page-btns">
+          <button className="chr-page-btn" onClick={() => setPage(1)} disabled={page === 1} aria-label="First page">«</button>
+          <button className="chr-page-btn" onClick={() => setPage(p => p - 1)} disabled={page === 1} aria-label="Previous page">‹</button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+            <button key={n} className={`chr-page-btn${page === n ? ' chr-page-btn-active' : ''}`} onClick={() => setPage(n)} aria-label={`Page ${n}`} aria-current={page === n ? 'page' : undefined}>{n}</button>
+          ))}
+          <button className="chr-page-btn" onClick={() => setPage(p => p + 1)} disabled={page === totalPages} aria-label="Next page">›</button>
+          <button className="chr-page-btn" onClick={() => setPage(totalPages)} disabled={page === totalPages} aria-label="Last page">»</button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -209,6 +235,10 @@ const ACTION_CLS = {
 };
 
 function JDELogTab() {
+  const [page, setPage] = useState(1);
+  const totalPages     = Math.max(1, Math.ceil(jdeEvents.length / RDC_PAGE_SIZE));
+  const paginatedJde   = jdeEvents.slice((page - 1) * RDC_PAGE_SIZE, page * RDC_PAGE_SIZE);
+
   return (
     <div>
       {/* Hold Code Reference */}
@@ -241,7 +271,7 @@ function JDELogTab() {
             </tr>
           </thead>
           <tbody>
-            {jdeEvents.map(e => (
+            {paginatedJde.map(e => (
               <tr key={e.id} className="rdc-tr">
                 <td className="rdc-td rdc-td-event">{e.id}</td>
                 <td className="rdc-td rdc-order-id">{e.orderId}</td>
@@ -260,6 +290,22 @@ function JDELogTab() {
             ))}
           </tbody>
         </table>
+
+        {/* Pagination bar */}
+        <div className="chr-pagination">
+          <span className="chr-page-info">
+            {`${(page - 1) * RDC_PAGE_SIZE + 1}–${Math.min(page * RDC_PAGE_SIZE, jdeEvents.length)} of ${jdeEvents.length} rows`}
+          </span>
+          <div className="chr-page-btns">
+            <button className="chr-page-btn" onClick={() => setPage(1)} disabled={page === 1} aria-label="First page">«</button>
+            <button className="chr-page-btn" onClick={() => setPage(p => p - 1)} disabled={page === 1} aria-label="Previous page">‹</button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+              <button key={n} className={`chr-page-btn${page === n ? ' chr-page-btn-active' : ''}`} onClick={() => setPage(n)} aria-label={`Page ${n}`} aria-current={page === n ? 'page' : undefined}>{n}</button>
+            ))}
+            <button className="chr-page-btn" onClick={() => setPage(p => p + 1)} disabled={page === totalPages} aria-label="Next page">›</button>
+            <button className="chr-page-btn" onClick={() => setPage(totalPages)} disabled={page === totalPages} aria-label="Last page">»</button>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -144,20 +144,24 @@ function BoolCell({ val }) {
 
 // ── Page component ────────────────────────────────────────────────────────────
 
+const PAGE_SIZE = 2;
+
 export default function CreditHoldReport() {
-  // Text typed into the filter input
   const [filter, setFilter] = useState('');
+  const [page,   setPage]   = useState(1);
 
-const { exportReport, exportRowCount } = useExportReport({
-  reportRows,
-  columns: COLUMNS,
-  fileName: 'credit_hold_report',
-  sheetName: 'Credit Hold Report',
-});
+  const { exportReport } = useExportReport({
+    reportRows,
+    columns: COLUMNS,
+    fileName: 'credit_hold_report',
+    sheetName: 'Credit Hold Report',
+  });
 
-  // Derived filtered rows — recomputed only when `filter` changes.
-  // These are the rows passed to both the table and the export functions,
-  // so CSV / XLSX always download exactly what the user currently sees.
+  function handleFilterChange(value) {
+    setFilter(value);
+    setPage(1);
+  }
+
   const rows = useMemo(() => {
     if (!filter.trim()) return reportRows;
     const q = filter.toLowerCase();
@@ -171,6 +175,9 @@ const { exportReport, exportRowCount } = useExportReport({
       r.notes.toLowerCase().includes(q)
     );
   }, [filter]);
+
+  const totalPages    = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  const paginatedRows = rows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   function formatCellValue(row, key) {
     const value = row[key];
@@ -251,7 +258,7 @@ const { exportReport, exportRowCount } = useExportReport({
           className="chr-filter-input"
           placeholder="Filter by customer, order, sales rep, reason..."
           value={filter}
-          onChange={e => setFilter(e.target.value)}
+          onChange={e => handleFilterChange(e.target.value)}
         />
       </div>
       </div>
@@ -268,7 +275,7 @@ const { exportReport, exportRowCount } = useExportReport({
               </tr>
             </thead>
             <tbody>
-              {rows.map(r => (
+              {paginatedRows.map(r => (
                 <tr key={r.id} className="chr-tr">
                   {COLUMNS.map(col => (
                     <td key={col.key} className={`chr-td ${col.className || ''}`}>
@@ -277,7 +284,6 @@ const { exportReport, exportRowCount } = useExportReport({
                   ))}
                 </tr>
               ))}
-              {/* Empty state — shown when filter matches nothing */}
               {rows.length === 0 && (
                 <tr>
                   <td colSpan={19} className="chr-empty">No rows match the filter</td>
@@ -285,6 +291,48 @@ const { exportReport, exportRowCount } = useExportReport({
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* ── Pagination bar ── */}
+        <div className="chr-pagination">
+          <span className="chr-page-info">
+            {rows.length === 0 ? '0 rows' : `${(page - 1) * PAGE_SIZE + 1}–${Math.min(page * PAGE_SIZE, rows.length)} of ${rows.length} rows`}
+          </span>
+          <div className="chr-page-btns">
+            <button
+              className="chr-page-btn"
+              onClick={() => setPage(1)}
+              disabled={page === 1}
+              aria-label="First page"
+            >«</button>
+            <button
+              className="chr-page-btn"
+              onClick={() => setPage(p => p - 1)}
+              disabled={page === 1}
+              aria-label="Previous page"
+            >‹</button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+              <button
+                key={n}
+                className={`chr-page-btn${page === n ? ' chr-page-btn-active' : ''}`}
+                onClick={() => setPage(n)}
+                aria-label={`Page ${n}`}
+                aria-current={page === n ? 'page' : undefined}
+              >{n}</button>
+            ))}
+            <button
+              className="chr-page-btn"
+              onClick={() => setPage(p => p + 1)}
+              disabled={page === totalPages}
+              aria-label="Next page"
+            >›</button>
+            <button
+              className="chr-page-btn"
+              onClick={() => setPage(totalPages)}
+              disabled={page === totalPages}
+              aria-label="Last page"
+            >»</button>
+          </div>
         </div>
       </div>
 

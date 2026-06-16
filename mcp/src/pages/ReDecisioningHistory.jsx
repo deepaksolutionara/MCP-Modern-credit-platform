@@ -13,7 +13,7 @@
  *   - Filenames are timestamped to avoid overwriting previous exports.
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Activity, RefreshCw, Clock } from 'lucide-react';
 import PageHeader from '../common/PageHeader';
 import '../App.css';
@@ -64,10 +64,17 @@ const IMPACT_CLS = v =>
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
+const RDH_PAGE_SIZE = 5;
+
 /**
  * EventsTab — renders the trigger-filtered re-decisioning events table.
  */
 function EventsTab({ rows }) {
+  const [page, setPage] = useState(1);
+  useEffect(() => { setPage(1); }, [rows]);
+  const totalPages    = Math.max(1, Math.ceil(rows.length / RDH_PAGE_SIZE));
+  const paginatedRows = rows.slice((page - 1) * RDH_PAGE_SIZE, page * RDH_PAGE_SIZE);
+
   return (
     <div className="rdh-table-wrap">
       <table className="rdh-table">
@@ -84,7 +91,7 @@ function EventsTab({ rows }) {
           </tr>
         </thead>
         <tbody>
-          {rows.map(e => (
+          {paginatedRows.map(e => (
             <tr key={e.id} className="rdh-tr">
               <td className="rdh-td">
                 <div className="rdh-order-id">{e.orderId}</div>
@@ -118,6 +125,22 @@ function EventsTab({ rows }) {
           )}
         </tbody>
       </table>
+
+      {/* Pagination bar */}
+      <div className="chr-pagination">
+        <span className="chr-page-info">
+          {rows.length === 0 ? '0 rows' : `${(page - 1) * RDH_PAGE_SIZE + 1}–${Math.min(page * RDH_PAGE_SIZE, rows.length)} of ${rows.length} rows`}
+        </span>
+        <div className="chr-page-btns">
+          <button className="chr-page-btn" onClick={() => setPage(1)} disabled={page === 1} aria-label="First page">«</button>
+          <button className="chr-page-btn" onClick={() => setPage(p => p - 1)} disabled={page === 1} aria-label="Previous page">‹</button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+            <button key={n} className={`chr-page-btn${page === n ? ' chr-page-btn-active' : ''}`} onClick={() => setPage(n)} aria-label={`Page ${n}`} aria-current={page === n ? 'page' : undefined}>{n}</button>
+          ))}
+          <button className="chr-page-btn" onClick={() => setPage(p => p + 1)} disabled={page === totalPages} aria-label="Next page">›</button>
+          <button className="chr-page-btn" onClick={() => setPage(totalPages)} disabled={page === totalPages} aria-label="Last page">»</button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -127,6 +150,10 @@ function EventsTab({ rows }) {
  * No filter UI; always shows all upstreamEvents.
  */
 function UpstreamTab() {
+  const [page, setPage] = useState(1);
+  const totalPages     = Math.max(1, Math.ceil(upstreamEvents.length / RDH_PAGE_SIZE));
+  const paginatedRows  = upstreamEvents.slice((page - 1) * RDH_PAGE_SIZE, page * RDH_PAGE_SIZE);
+
   return (
     <div className="rdh-table-wrap">
       <table className="rdh-table">
@@ -144,7 +171,7 @@ function UpstreamTab() {
           </tr>
         </thead>
         <tbody>
-          {upstreamEvents.map(e => (
+          {paginatedRows.map(e => (
             <tr key={e.id} className="rdh-tr">
               <td className="rdh-td rdh-event-id">{e.id}</td>
               <td className="rdh-td rdh-order-id">{e.orderId}</td>
@@ -170,6 +197,22 @@ function UpstreamTab() {
           )}
         </tbody>
       </table>
+
+      {/* Pagination bar */}
+      <div className="chr-pagination">
+        <span className="chr-page-info">
+          {upstreamEvents.length === 0 ? '0 rows' : `${(page - 1) * RDH_PAGE_SIZE + 1}–${Math.min(page * RDH_PAGE_SIZE, upstreamEvents.length)} of ${upstreamEvents.length} rows`}
+        </span>
+        <div className="chr-page-btns">
+          <button className="chr-page-btn" onClick={() => setPage(1)} disabled={page === 1} aria-label="First page">«</button>
+          <button className="chr-page-btn" onClick={() => setPage(p => p - 1)} disabled={page === 1} aria-label="Previous page">‹</button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+            <button key={n} className={`chr-page-btn${page === n ? ' chr-page-btn-active' : ''}`} onClick={() => setPage(n)} aria-label={`Page ${n}`} aria-current={page === n ? 'page' : undefined}>{n}</button>
+          ))}
+          <button className="chr-page-btn" onClick={() => setPage(p => p + 1)} disabled={page === totalPages} aria-label="Next page">›</button>
+          <button className="chr-page-btn" onClick={() => setPage(totalPages)} disabled={page === totalPages} aria-label="Last page">»</button>
+        </div>
+      </div>
     </div>
   );
 }

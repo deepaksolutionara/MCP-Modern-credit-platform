@@ -171,11 +171,14 @@ function ErrorRow({ onRetry }) {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+const PAGE_SIZE = 5;
+
 export default function ReDecisioningEvents() {
   // In production, drive this from a useEffect fetch:
   //   'loading' → 'ready' | 'error'
   // Defaulting to 'ready' here since rdEvents is static mock data.
   const [status, setStatus] = useState('ready');
+  const [page, setPage] = useState(1);
 
   // rdEvents is a module-level constant so [] is the correct dep array —
   // these values are computed once on mount and never recalculated.
@@ -195,6 +198,8 @@ export default function ReDecisioningEvents() {
 }, []);
 
 const { total, holds, eligible, conditional } = stats;
+  const totalPages      = Math.max(1, Math.ceil(rdEvents.length / PAGE_SIZE));
+  const paginatedEvents = rdEvents.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const kpis = [
     { label: 'Total events', value: total, className: 'rde-kpi-black' },
     { label: 'Resulting Holds', value: holds, className: 'rde-kpi-red' },
@@ -247,7 +252,7 @@ const { total, holds, eligible, conditional } = stats;
             {status === 'loading' && <LoadingRows />}
             {status === 'error' && <ErrorRow onRetry={() => setStatus('loading')} />}
             {status === 'ready' && rdEvents.length === 0 && <EmptyRow />}
-            {status === 'ready' && rdEvents.map(event => (
+            {status === 'ready' && paginatedEvents.map(event => (
               <tr key={event.id} className="rde-tr">
                 {COLUMNS.map(col => (
                   <td
@@ -261,6 +266,21 @@ const { total, holds, eligible, conditional } = stats;
             ))}
           </tbody>
         </table>
+        {/* Pagination bar */}
+        <div className="chr-pagination">
+          <span className="chr-page-info">
+            {rdEvents.length === 0 ? '0 rows' : `${(page - 1) * PAGE_SIZE + 1}–${Math.min(page * PAGE_SIZE, rdEvents.length)} of ${rdEvents.length} rows`}
+          </span>
+          <div className="chr-page-btns">
+            <button className="chr-page-btn" onClick={() => setPage(1)} disabled={page === 1} aria-label="First page">«</button>
+            <button className="chr-page-btn" onClick={() => setPage(p => p - 1)} disabled={page === 1} aria-label="Previous page">‹</button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+              <button key={n} className={`chr-page-btn${page === n ? ' chr-page-btn-active' : ''}`} onClick={() => setPage(n)} aria-label={`Page ${n}`} aria-current={page === n ? 'page' : undefined}>{n}</button>
+            ))}
+            <button className="chr-page-btn" onClick={() => setPage(p => p + 1)} disabled={page === totalPages} aria-label="Next page">›</button>
+            <button className="chr-page-btn" onClick={() => setPage(totalPages)} disabled={page === totalPages} aria-label="Last page">»</button>
+          </div>
+        </div>
       </div>
 
     </div>

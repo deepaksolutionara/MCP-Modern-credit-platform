@@ -178,9 +178,12 @@ function ChannelBadge({ channel }) {
 }
 // ── Page ─────────────────────────────────────────────────────────────────────
 
+const TPL_PAGE_SIZE = 5;
+
 export default function Communications() {
-  const [activeTab, setActiveTab] = useState('timeline');
-  const [search,    setSearch]    = useState('');
+  const [activeTab,  setActiveTab]  = useState('timeline');
+  const [search,     setSearch]     = useState('');
+  const [tplPage,    setTplPage]    = useState(1);
 
 const SEARCH_FIELDS = ['title', 'body', 'scopeId', 'agent', 'scope'];
 
@@ -195,6 +198,9 @@ const filtered = useMemo(() => {
     )
   );
 }, [search]);
+
+  const tplTotalPages = Math.max(1, Math.ceil(templates.length / TPL_PAGE_SIZE));
+  const paginatedTpls = templates.slice((tplPage - 1) * TPL_PAGE_SIZE, tplPage * TPL_PAGE_SIZE);
 
   return (
     <div className="dashboard">
@@ -277,32 +283,50 @@ const filtered = useMemo(() => {
         <div className="comm-tpl-card">
           <div className="comm-tpl-card-title">Communication Templates</div>
 
-          <table className="comm-tpl-table">
-            <thead>
-              <tr>
-                {templateColumns.map((col, i) => (
-                  <th key={i} className={['comm-tpl-th', col.thClass].filter(Boolean).join(' ')}>
-                    {col.label}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {templates.map(t => (
-                <tr key={t.id} className="comm-tpl-tr">
-                  {templateColumns.map((col, ci) => {
-                    const val     = col.key ? t[col.key] : undefined;
-                    const content = col.render ? col.render(val, t) : val;
-                    return (
-                      <td key={ci} className={['comm-tpl-td', col.tdClass].filter(Boolean).join(' ')}>
-                        {content}
-                      </td>
-                    );
-                  })}
+          <div className="comm-tpl-scroll">
+            <table className="comm-tpl-table">
+              <thead>
+                <tr>
+                  {templateColumns.map((col, i) => (
+                    <th key={i} className={['comm-tpl-th', col.thClass].filter(Boolean).join(' ')}>
+                      {col.label}
+                    </th>
+                  ))}
                 </tr>
+              </thead>
+              <tbody>
+                {paginatedTpls.map(t => (
+                  <tr key={t.id} className="comm-tpl-tr">
+                    {templateColumns.map((col, ci) => {
+                      const val     = col.key ? t[col.key] : undefined;
+                      const content = col.render ? col.render(val, t) : val;
+                      return (
+                        <td key={ci} className={['comm-tpl-td', col.tdClass].filter(Boolean).join(' ')}>
+                          {content}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination bar */}
+          <div className="chr-pagination">
+            <span className="chr-page-info">
+              {`${(tplPage - 1) * TPL_PAGE_SIZE + 1}–${Math.min(tplPage * TPL_PAGE_SIZE, templates.length)} of ${templates.length} rows`}
+            </span>
+            <div className="chr-page-btns">
+              <button className="chr-page-btn" onClick={() => setTplPage(1)} disabled={tplPage === 1} aria-label="First page">«</button>
+              <button className="chr-page-btn" onClick={() => setTplPage(p => p - 1)} disabled={tplPage === 1} aria-label="Previous page">‹</button>
+              {Array.from({ length: tplTotalPages }, (_, i) => i + 1).map(n => (
+                <button key={n} className={`chr-page-btn${tplPage === n ? ' chr-page-btn-active' : ''}`} onClick={() => setTplPage(n)} aria-label={`Page ${n}`} aria-current={tplPage === n ? 'page' : undefined}>{n}</button>
               ))}
-            </tbody>
-          </table>
+              <button className="chr-page-btn" onClick={() => setTplPage(p => p + 1)} disabled={tplPage === tplTotalPages} aria-label="Next page">›</button>
+              <button className="chr-page-btn" onClick={() => setTplPage(tplTotalPages)} disabled={tplPage === tplTotalPages} aria-label="Last page">»</button>
+            </div>
+          </div>
         </div>
       )}
 

@@ -42,6 +42,7 @@ const WorkloadTab = () => {
           </div>
         </div>
 
+        <div className="nba-wl-scroll">
         <table className="nba-wl-table">
           <thead>
             <tr>
@@ -71,6 +72,7 @@ const WorkloadTab = () => {
             ))}
           </tbody>
         </table>
+        </div>
 
         <div className="nba-wl-footer">
           <button className="nba-wl-reassign-btn">Reassign workload</button>

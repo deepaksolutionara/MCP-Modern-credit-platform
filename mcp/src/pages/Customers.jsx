@@ -85,15 +85,12 @@ function RecentlyViewed({ items }) {
 }
 
 // ── Results table ─────────────────────────────────────────────────────────────
-// Always renders all 6 columns. The .cust-table-scroll wrapper provides
-// horizontal scroll on narrow screens so no columns are ever hidden or removed.
 
-function ResultsTable({ results }) {
+function ResultsTable({ results, totalCount, page, totalPages, onPageChange }) {
   return (
     <div className="card cust-table-card">
-      {/* aria-live announces result count to screen readers as the user types */}
       <div className="cust-results-label" aria-live="polite" aria-atomic="true">
-        Results ({results.length})
+        Results ({totalCount})
       </div>
 
       <div className="cust-table-scroll">
@@ -148,6 +145,30 @@ function ResultsTable({ results }) {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination bar */}
+      <div className="chr-pagination">
+        <span className="chr-page-info">
+          {totalCount === 0
+            ? '0 rows'
+            : `${(page - 1) * 5 + 1}–${Math.min(page * 5, totalCount)} of ${totalCount} rows`}
+        </span>
+        <div className="chr-page-btns">
+          <button className="chr-page-btn" onClick={() => onPageChange(1)} disabled={page === 1} aria-label="First page">«</button>
+          <button className="chr-page-btn" onClick={() => onPageChange(page - 1)} disabled={page === 1} aria-label="Previous page">‹</button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+            <button
+              key={n}
+              className={`chr-page-btn${page === n ? ' chr-page-btn-active' : ''}`}
+              onClick={() => onPageChange(n)}
+              aria-label={`Page ${n}`}
+              aria-current={page === n ? 'page' : undefined}
+            >{n}</button>
+          ))}
+          <button className="chr-page-btn" onClick={() => onPageChange(page + 1)} disabled={page === totalPages} aria-label="Next page">›</button>
+          <button className="chr-page-btn" onClick={() => onPageChange(totalPages)} disabled={page === totalPages} aria-label="Last page">»</button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -175,13 +196,19 @@ function CustomersHeader() {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
+const PAGE_SIZE = 5;
+
 export default function Customers() {
   const [query, setQuery] = useState('');
+  const [page,  setPage]  = useState(1);
 
-  // Computed once per mount — recent items don't change during a session
   const recentlyViewed = useMemo(() => getRecentlyViewed(), []);
 
-  // Filter customers as the user types — runs only when query changes
+  function handleQueryChange(value) {
+    setQuery(value);
+    setPage(1);
+  }
+
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return customersData;
@@ -192,9 +219,11 @@ export default function Customers() {
     );
   }, [query]);
 
+  const totalPages      = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
+  const paginatedResults = results.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
   return (
     <>
-      {/* WCAG 2.4.1 — skip link */}
       <a href="#customers-main" className="skip-link">
         Skip to customer list
       </a>
@@ -204,11 +233,17 @@ export default function Customers() {
 
         <CustomersHeader />
 
-        <CustomerSearch value={query} onChange={setQuery} />
+        <CustomerSearch value={query} onChange={handleQueryChange} />
 
         <RecentlyViewed items={recentlyViewed} />
 
-        <ResultsTable results={results} />
+        <ResultsTable
+          results={paginatedResults}
+          totalCount={results.length}
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
       </div>
     </>
   );

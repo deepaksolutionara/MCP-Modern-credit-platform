@@ -157,21 +157,20 @@ export default function Cases() {
         <CasesHeader />
 
         {/* Search bar — full width */}
-        <CasesSearch value={search} onChange={setSearch} />
-
-        {/* Filters row — side by side on mobile */}
-        <div className="cases-filters-row">
-          <SelectFilter
-            value={status}
-            options={statuses}
-            onChange={setStatus}
-            ariaLabel="Filter by status"
-          />
+        {/* Search + filters */}
+        <div className="cases-controls">
+          <CasesSearch value={search} onChange={setSearch} />
           <SelectFilter
             value={priority}
             options={priorities}
             onChange={setPriority}
             ariaLabel="Filter by priority"
+          />
+          <SelectFilter
+            value={status}
+            options={statuses}
+            onChange={setStatus}
+            ariaLabel="Filter by status"
           />
         </div>
 

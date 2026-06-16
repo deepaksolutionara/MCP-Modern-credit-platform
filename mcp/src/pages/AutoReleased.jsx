@@ -97,8 +97,11 @@ function renderCell(event, key) {
 }
 // ── Page ──────────────────────────────────────────────────────────────────────
 
+const PAGE_SIZE = 3;
+
 export default function AutoReleased() {
   const [filter, setFilter] = useState('all');
+  const [page, setPage] = useState(1);
 
   const filtered = useMemo(() =>
     filter === 'all'
@@ -106,6 +109,9 @@ export default function AutoReleased() {
       : autoReleaseEvents.filter(e => e.jdeSync.toLowerCase() === filter),
     [filter]
   );
+
+  const totalPages      = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paginatedEvents = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
     <div className="dashboard">
@@ -134,7 +140,7 @@ export default function AutoReleased() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map(event => (
+              {paginatedEvents.map(event => (
                 <tr key={event.audit}>
                   {COLUMNS.map(col => (
                     <td key={col.key}>{renderCell(event, col.key)}</td>
@@ -143,6 +149,22 @@ export default function AutoReleased() {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Pagination bar */}
+        <div className="chr-pagination">
+          <span className="chr-page-info">
+            {filtered.length === 0 ? '0 rows' : `${(page - 1) * PAGE_SIZE + 1}–${Math.min(page * PAGE_SIZE, filtered.length)} of ${filtered.length} rows`}
+          </span>
+          <div className="chr-page-btns">
+            <button className="chr-page-btn" onClick={() => setPage(1)} disabled={page === 1} aria-label="First page">«</button>
+            <button className="chr-page-btn" onClick={() => setPage(p => p - 1)} disabled={page === 1} aria-label="Previous page">‹</button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+              <button key={n} className={`chr-page-btn${page === n ? ' chr-page-btn-active' : ''}`} onClick={() => setPage(n)} aria-label={`Page ${n}`} aria-current={page === n ? 'page' : undefined}>{n}</button>
+            ))}
+            <button className="chr-page-btn" onClick={() => setPage(p => p + 1)} disabled={page === totalPages} aria-label="Next page">›</button>
+            <button className="chr-page-btn" onClick={() => setPage(totalPages)} disabled={page === totalPages} aria-label="Last page">»</button>
+          </div>
         </div>
       </div>
     </div>

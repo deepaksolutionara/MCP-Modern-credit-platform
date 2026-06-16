@@ -128,6 +128,7 @@ export default function HeldOrders() {
 
   const [activeFilter, setActiveFilter] = useState('all');
   const [sortKey,      setSortKey]      = useState('priority');
+  const [page,         setPage]         = useState(1);
 
   const filterTabsWithCount = useMemo(() =>
     FILTER_TABS.map(tab => ({
@@ -150,6 +151,10 @@ export default function HeldOrders() {
     });
   }, [activeFilter, sortKey]);
 
+  const PAGE_SIZE    = 5;
+  const totalPages   = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paginatedOrders = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
   return (
     <>
       <a href="#ho-table" className="skip-link">Skip to held orders table</a>
@@ -165,7 +170,7 @@ export default function HeldOrders() {
             <button
               key={tab.key}
               className={`ho-filter-tab${activeFilter === tab.key ? ' ho-filter-tab-active' : ''}`}
-              onClick={() => setActiveFilter(tab.key)}
+              onClick={() => { setActiveFilter(tab.key); setPage(1); }}
               aria-pressed={activeFilter === tab.key}
             >
               {tab.label}
@@ -181,7 +186,7 @@ export default function HeldOrders() {
             <button
               key={opt.key}
               className={`ho-sort-pill${sortKey === opt.key ? ' ho-sort-pill-active' : ''}`}
-              onClick={() => setSortKey(opt.key)}
+              onClick={() => { setSortKey(opt.key); setPage(1); }}
               aria-pressed={sortKey === opt.key}
             >
               {opt.label}
@@ -214,7 +219,7 @@ export default function HeldOrders() {
                     </td>
                   </tr>
                 ) : (
-                  filtered.map(order => (
+                  paginatedOrders.map(order => (
                     <tr
                       key={order.id}
                       className={
@@ -233,6 +238,22 @@ export default function HeldOrders() {
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Pagination bar */}
+          <div className="chr-pagination">
+            <span className="chr-page-info">
+              {filtered.length === 0 ? '0 rows' : `${(page - 1) * PAGE_SIZE + 1}–${Math.min(page * PAGE_SIZE, filtered.length)} of ${filtered.length} rows`}
+            </span>
+            <div className="chr-page-btns">
+              <button className="chr-page-btn" onClick={() => setPage(1)} disabled={page === 1} aria-label="First page">«</button>
+              <button className="chr-page-btn" onClick={() => setPage(p => p - 1)} disabled={page === 1} aria-label="Previous page">‹</button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+                <button key={n} className={`chr-page-btn${page === n ? ' chr-page-btn-active' : ''}`} onClick={() => setPage(n)} aria-label={`Page ${n}`} aria-current={page === n ? 'page' : undefined}>{n}</button>
+              ))}
+              <button className="chr-page-btn" onClick={() => setPage(p => p + 1)} disabled={page === totalPages} aria-label="Next page">›</button>
+              <button className="chr-page-btn" onClick={() => setPage(totalPages)} disabled={page === totalPages} aria-label="Last page">»</button>
+            </div>
           </div>
         </div>
 

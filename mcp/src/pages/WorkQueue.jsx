@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import '../App.css';
-import { Inbox, Clock, AlertTriangle, ArrowUp } from 'lucide-react';
+import { Inbox, Clock, ArrowUp } from 'lucide-react';
 import PageHeader from '../common/PageHeader';
 import Announcement from '../common/Announcement';
 
@@ -72,7 +72,7 @@ const PRIORITY_STYLE = {
 };
 
 const STATUS_STYLE = {
-  'New':               { background: '#dbeafe', color: '#2563eb' },
+  'New':               { background: '#2563eb', color: '#fff' },
   'In Review':         { background: '#fef9c3', color: '#854d0e' },
   'Waiting on Dealer': { background: '#fff7ed', color: '#c2410c' },
   'Waiting on Return': { background: '#fff7ed', color: '#c2410c' },
@@ -114,55 +114,58 @@ const COLUMNS = [
   { label: 'Owner',    key: 'owner',    tdClass: 'case-type'   },
 ];
 
-// ── Mobile case card ──────────────────────────────────────────────────────────
+// ── Case card ─────────────────────────────────────────────────────────────────
 
 function CaseCard({ c }) {
-  const isBreach = c.sla.startsWith('Breached');
-  const barPct   = Math.min((c.slaElapsed / c.slaTotal) * 100, 100);
-  const barColor = slaBarColor(c.slaElapsed, c.slaTotal);
+  const isBreach    = c.sla.startsWith('Breached');
+  const barPct      = Math.min((c.slaElapsed / c.slaTotal) * 100, 100);
+  const barColor    = slaBarColor(c.slaElapsed, c.slaTotal);
   const statusStyle = STATUS_STYLE[c.status] || { background: '#f1f5f9', color: '#64748b' };
 
   return (
-    <div className="mwq-card">
-      {/* Row 1: Case ID + Priority */}
-      <div className="mwq-card-top">
-        <span className="mwq-case-id">{c.id}</span>
-        <span className="mwq-priority" style={PRIORITY_STYLE[c.priority]}>{c.priority}</span>
-      </div>
+    <div className="wq-cc">
 
-      {/* Row 2: Dealer name */}
-      <div className="mwq-dealer">{c.dealer}</div>
-
-      {/* Row 3: Order · Team */}
-      <div className="mwq-meta">{c.orderId} · {c.team}</div>
-
-      {/* Row 4: Status badge + SLA bar + SLA text */}
-      <div className="mwq-sla-row">
-        <span className="mwq-status-badge" style={statusStyle}>{c.status}</span>
-        <div className="mwq-sla-bar-wrap">
-          <div className="mwq-sla-bar" style={{ width: `${barPct}%`, background: barColor }} />
+      {/* Left: case ID + dealer + meta */}
+      <div className="wq-cc-left">
+        <div className="wq-cc-top">
+          <span className="wq-cc-id">{c.id}</span>
+          <span className="wq-cc-badge" style={PRIORITY_STYLE[c.priority]}>{c.priority}</span>
         </div>
-        {!isBreach && c.sla !== 'Released' && (
-          <span className="mwq-sla-text" style={{ color: barColor }}>{c.sla}</span>
+        <div className="wq-cc-dealer">{c.dealer}</div>
+        <div className="wq-cc-meta">
+          <span>{c.orderId}</span>
+          <span className="wq-cc-sep">·</span>
+          <span>{c.team}</span>
+        </div>
+      </div>
+
+      {/* Status + owner */}
+      <div className="wq-cc-status-col">
+        <span className="wq-cc-status" style={statusStyle}>{c.status}</span>
+        <div className="wq-cc-owner-row">Owner: {c.owner}</div>
+      </div>
+
+      {/* SLA bar + breach/time below */}
+      <div className="wq-cc-sla-col">
+        <div className="wq-cc-sla-bar-row">
+          <Clock size={11} className="wq-cc-clock" aria-hidden="true" />
+          <div className="wq-cc-sla-bar-bg">
+            <div className="wq-cc-sla-bar" style={{ width: `${barPct}%`, background: barColor }} />
+          </div>
+        </div>
+        {isBreach ? (
+          <span className="wq-cc-breach-txt">{c.sla}</span>
+        ) : c.sla !== 'Released' && (
+          <span className="wq-cc-sla-time" style={{ color: barColor }}>{c.sla}</span>
         )}
       </div>
 
-      {/* Row 5: Owner + breach badge */}
-      <div className="mwq-owner-row">
-        <span className="mwq-owner">Owner: {c.owner}</span>
-        {isBreach && (
-          <span className="mwq-breach">
-            <AlertTriangle size={11} style={{ marginRight: 3 }} />
-            {c.sla}
-          </span>
-        )}
-      </div>
-
-      {/* Divider + created */}
-      <div className="mwq-divider" />
-      <div className="mwq-created">
-        <ArrowUp size={11} style={{ marginRight: 3, color: '#94a3b8' }} />
-        Created {c.created}
+      {/* Right: created */}
+      <div className="wq-cc-right">
+        <div className="wq-cc-created">
+          <ArrowUp size={10} className="wq-cc-arrow" aria-hidden="true" />
+          Created {c.created}
+        </div>
       </div>
     </div>
   );
@@ -174,13 +177,18 @@ const QUEUE_PARAM_MAP = { breached: 'breached_sla', escalated: 'escalated' };
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
+const PAGE_SIZE = 5;
+
 export default function WorkQueue() {
   const [searchParams] = useSearchParams();
   const initialTab    = QUEUE_PARAM_MAP[searchParams.get('queue')] ?? 'new';
   const [activeTab,  setActiveTab]  = useState(initialTab);
   const [activeCat,  setActiveCat]  = useState('All');
+  const [page,       setPage]       = useState(1);
 
   const cases = casesByTab[activeTab] ?? [];
+  const totalPages    = Math.max(1, Math.ceil(cases.length / PAGE_SIZE));
+  const paginatedCases = cases.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
     <div className="dashboard">
@@ -214,74 +222,53 @@ export default function WorkQueue() {
         ))}
       </div>
 
-      {/* ── Status tabs + content card ── */}
-      <div className="card wq-card">
-
-        {/* Tab bar */}
-        <div className="wq-tabs mwq-tabs-wrap" role="tablist">
-          {tabs.map(tab => {
-            const count    = (casesByTab[tab.key] ?? []).length;
-            const isActive = activeTab === tab.key;
-            return (
-              <button
-                key={tab.key}
-                role="tab"
-                aria-selected={isActive}
-                className={`wq-tab${isActive ? ' wq-tab-active' : ''}`}
-                onClick={() => setActiveTab(tab.key)}
-              >
-                {tab.label}
-                <span className={`wq-tab-count${isActive ? ' wq-tab-count-active' : ''}`}>
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Empty state */}
-        {cases.length === 0 ? (
-          <div className="wq-empty">No cases in this queue</div>
-        ) : (
-          <>
-            {/* Desktop: table */}
-            <div className="table-wrap wq-table-desktop">
-              <table className="cases-table">
-                <thead>
-                  <tr>
-                    {COLUMNS.map((col, i) => (
-                      <th key={i} style={col.align === 'right' ? { textAlign: 'right' } : undefined}>
-                        {col.label}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {cases.map(c => (
-                    <tr key={c.id}>
-                      {COLUMNS.map((col, ci) => {
-                        const val     = col.key ? c[col.key] : undefined;
-                        const content = col.render ? col.render(val, c) : val;
-                        return (
-                          <td key={ci} className={col.tdClass}
-                            style={col.align === 'right' ? { textAlign: 'right' } : undefined}>
-                            {content}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Mobile: stacked cards */}
-            <div className="wq-cards-mobile">
-              {cases.map(c => <CaseCard key={c.id} c={c} />)}
-            </div>
-          </>
-        )}
+      {/* ── Tab bar ── */}
+      <div className="wq-tabs mwq-tabs-wrap" role="tablist">
+        {tabs.map(tab => {
+          const count    = (casesByTab[tab.key] ?? []).length;
+          const isActive = activeTab === tab.key;
+          return (
+            <button
+              key={tab.key}
+              role="tab"
+              aria-selected={isActive}
+              className={`wq-tab${isActive ? ' wq-tab-active' : ''}`}
+              onClick={() => { setActiveTab(tab.key); setPage(1); }}
+            >
+              {tab.label}
+              <span className={`wq-tab-count${isActive ? ' wq-tab-count-active' : ''}`}>
+                {count}
+              </span>
+            </button>
+          );
+        })}
       </div>
+
+      {/* ── Cases ── */}
+      {cases.length === 0 ? (
+        <div className="wq-empty">No cases in this queue</div>
+      ) : (
+        <>
+          <div className="wq-cases-grid">
+            {paginatedCases.map(c => <CaseCard key={c.id} c={c} />)}
+          </div>
+
+          <div className="chr-pagination">
+            <span className="chr-page-info">
+              {`${(page - 1) * PAGE_SIZE + 1}–${Math.min(page * PAGE_SIZE, cases.length)} of ${cases.length} rows`}
+            </span>
+            <div className="chr-page-btns">
+              <button className="chr-page-btn" onClick={() => setPage(1)} disabled={page === 1} aria-label="First page">«</button>
+              <button className="chr-page-btn" onClick={() => setPage(p => p - 1)} disabled={page === 1} aria-label="Previous page">‹</button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+                <button key={n} className={`chr-page-btn${page === n ? ' chr-page-btn-active' : ''}`} onClick={() => setPage(n)} aria-label={`Page ${n}`} aria-current={page === n ? 'page' : undefined}>{n}</button>
+              ))}
+              <button className="chr-page-btn" onClick={() => setPage(p => p + 1)} disabled={page === totalPages} aria-label="Next page">›</button>
+              <button className="chr-page-btn" onClick={() => setPage(totalPages)} disabled={page === totalPages} aria-label="Last page">»</button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

@@ -12,7 +12,7 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import { AlertTriangle } from 'lucide-react';
+import { Timer } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import '../App.css';
 
@@ -68,11 +68,11 @@ const COLUMNS = [
 function SLAHeader() {
   return (
     <header className="sla-page-header">
-      <h1 className="sla-title">SLA Risk Queue</h1>
-      <div className="sla-subtitle-row">
-        <div className="sla-header-icon" aria-hidden="true">
-          <AlertTriangle size={18} color="#f59e0b" />
-        </div>
+      <div className="sla-header-icon" aria-hidden="true">
+        <Timer size={18} color="#f59e0b" />
+      </div>
+      <div className="sla-header-content">
+        <h1 className="sla-title">SLA Risk Queue</h1>
         <p className="sla-subtitle">
           All operational objects (holds, disputes, collections, credit reviews,
           JDE exceptions) at or near SLA breach
@@ -84,8 +84,11 @@ function SLAHeader() {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
+const PAGE_SIZE = 5;
+
 export default function SLARiskQueue() {
   const [activeFilter, setActiveFilter] = useState('all');
+  const [page, setPage] = useState(1);
 
   const filterTabs = useMemo(() =>
     FILTER_CONFIG.map(tab => ({
@@ -103,6 +106,9 @@ export default function SLARiskQueue() {
     [activeFilter]
   );
 
+  const totalPages     = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paginatedItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
   return (
     <>
       <a href="#sla-table" className="skip-link">Skip to SLA risk table</a>
@@ -117,7 +123,7 @@ export default function SLARiskQueue() {
             <button
               key={tab.key}
               className={`sla-filter-tab${activeFilter === tab.key ? ' sla-filter-tab-active' : ''}`}
-              onClick={() => setActiveFilter(tab.key)}
+              onClick={() => { setActiveFilter(tab.key); setPage(1); }}
               aria-pressed={activeFilter === tab.key}
             >
               {tab.label}
@@ -136,6 +142,7 @@ export default function SLARiskQueue() {
             aria-atomic="true"
           >
             {filtered.length} object(s) at SLA risk
+            {filtered.length > 0 && ` — page ${page} of ${totalPages}`}
           </div>
 
           <div className="sla-table-scroll">
@@ -151,7 +158,7 @@ export default function SLARiskQueue() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map(item => (
+                {paginatedItems.map(item => (
                   <tr key={item.id}>
                     {COLUMNS.map(col => {
                       const cls = typeof col.className === 'function'
@@ -167,6 +174,22 @@ export default function SLARiskQueue() {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Pagination bar */}
+          <div className="chr-pagination">
+            <span className="chr-page-info">
+              {filtered.length === 0 ? '0 rows' : `${(page - 1) * PAGE_SIZE + 1}–${Math.min(page * PAGE_SIZE, filtered.length)} of ${filtered.length} rows`}
+            </span>
+            <div className="chr-page-btns">
+              <button className="chr-page-btn" onClick={() => setPage(1)} disabled={page === 1} aria-label="First page">«</button>
+              <button className="chr-page-btn" onClick={() => setPage(p => p - 1)} disabled={page === 1} aria-label="Previous page">‹</button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+                <button key={n} className={`chr-page-btn${page === n ? ' chr-page-btn-active' : ''}`} onClick={() => setPage(n)} aria-label={`Page ${n}`} aria-current={page === n ? 'page' : undefined}>{n}</button>
+              ))}
+              <button className="chr-page-btn" onClick={() => setPage(p => p + 1)} disabled={page === totalPages} aria-label="Next page">›</button>
+              <button className="chr-page-btn" onClick={() => setPage(totalPages)} disabled={page === totalPages} aria-label="Last page">»</button>
+            </div>
           </div>
         </div>
 
