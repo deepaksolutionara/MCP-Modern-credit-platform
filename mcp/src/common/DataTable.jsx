@@ -14,6 +14,8 @@
  *                       searchWrap, searchIcon, searchInput, table, th, thRight,
  *                       thCenter, tr, td, empty }. Unset keys fall back to the
  *                       cmod-* defaults so CommunicationModule needs no changes.
+ *   pagination        – Optional. Shape: { page, totalPages, totalCount, pageSize,
+ *                       onPageChange }. When provided, renders a chr-pagination bar.
  *
  * Column definition:
  *   {
@@ -55,6 +57,7 @@ export default function DataTable({
   onSearch,
   searchPlaceholder = 'Search...',
   classes = {},
+  pagination,
 }) {
   // Merge caller overrides with defaults — only provided keys are overridden
   const cls = { ...DEFAULTS, ...classes };
@@ -132,6 +135,24 @@ export default function DataTable({
         </tbody>
       </table>
 
+      {pagination && (
+        <div className="chr-pagination">
+          <span className="chr-page-info">
+            {pagination.totalCount === 0
+              ? '0 rows'
+              : `${(pagination.page - 1) * pagination.pageSize + 1}–${Math.min(pagination.page * pagination.pageSize, pagination.totalCount)} of ${pagination.totalCount} rows`}
+          </span>
+          <div className="chr-page-btns">
+            <button className="chr-page-btn" onClick={() => pagination.onPageChange(1)} disabled={pagination.page === 1} aria-label="First page">«</button>
+            <button className="chr-page-btn" onClick={() => pagination.onPageChange(pagination.page - 1)} disabled={pagination.page === 1} aria-label="Previous page">‹</button>
+            {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(n => (
+              <button key={n} className={`chr-page-btn${pagination.page === n ? ' chr-page-btn-active' : ''}`} onClick={() => pagination.onPageChange(n)} aria-label={`Page ${n}`} aria-current={pagination.page === n ? 'page' : undefined}>{n}</button>
+            ))}
+            <button className="chr-page-btn" onClick={() => pagination.onPageChange(pagination.page + 1)} disabled={pagination.page === pagination.totalPages} aria-label="Next page">›</button>
+            <button className="chr-page-btn" onClick={() => pagination.onPageChange(pagination.totalPages)} disabled={pagination.page === pagination.totalPages} aria-label="Last page">»</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

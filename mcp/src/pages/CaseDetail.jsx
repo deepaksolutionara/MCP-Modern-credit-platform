@@ -99,11 +99,11 @@ function SLASection({ c }) {
     ? `Breached +${Math.abs(c.slaHoursLeft)}h`
     : `${c.slaHoursLeft}h left`;
 
-    const slaActions = [
-  { label: 'Reassign', Icon: User, className: 'cdv-btn-ghost' },
-  { label: 'Escalate', Icon: ArrowUpRight, className: 'cdv-btn-escalate' },
-  { label: 'Override', Icon: Shield, className: 'cdv-btn-ghost' },
-];
+  const slaActions = [
+    { label: 'Reassign', Icon: User, className: 'cdv-btn-ghost' },
+    { label: 'Escalate', Icon: ArrowUpRight, className: 'cdv-btn-escalate' },
+    { label: 'Override', Icon: Shield, className: 'cdv-btn-ghost' },
+  ];
 
   return (
     <div className="cdv-section">
@@ -143,15 +143,11 @@ function SLASection({ c }) {
             </select>
             <ChevronDown size={12} className="cdv-select-chevron" />
           </div>
-          <button className="cdv-btn cdv-btn-ghost">
-            <User size={13} /> Reassign
-          </button>
-          <button className="cdv-btn cdv-btn-escalate">
-            <ArrowUpRight size={13} /> Escalate
-          </button>
-          <button className="cdv-btn cdv-btn-ghost">
-            <Shield size={13} /> Override
-          </button>
+          {slaActions.map(({ label, Icon, className }) => (
+            <button key={label} className={`cdv-btn ${className}`}>
+              <Icon size={13} /> {label}
+            </button>
+          ))}
         </div>
       </div>
       <div className="cdv-resolve-row">

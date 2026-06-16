@@ -51,24 +51,22 @@ export default function CaseCard({ c }) {
   return (
     <div className="case-card">
 
-      {/* Row 1: Case ID + Priority + Status badges */}
-      <div className="case-card-top">
-        <span className="case-card-id">{c.id}</span>
-        <span className="case-solid-badge" style={priorityBadge[c.priority]}>
-          {c.priority}
-        </span>
-        <span className="case-solid-badge" style={statusBadge[c.status]}>
-          {c.status}
-        </span>
+      {/* Left column: ID + badges + dealer + refs */}
+      <div className="case-card-left">
+        <div className="case-card-top">
+          <span className="case-card-id">{c.id}</span>
+          <span className="case-solid-badge" style={priorityBadge[c.priority]}>
+            {c.priority}
+          </span>
+          <span className="case-solid-badge" style={statusBadge[c.status]}>
+            {c.status}
+          </span>
+        </div>
+        <div className="case-card-dealer">{c.dealer}</div>
+        <div className="case-card-refs">{c.orderId} · {c.decId}</div>
       </div>
 
-      {/* Row 2: Dealer name */}
-      <div className="case-card-dealer">{c.dealer}</div>
-
-      {/* Row 3: Order · Decision refs */}
-      <div className="case-card-refs">{c.orderId} · {c.decId}</div>
-
-      {/* Row 4: Owner left / SLA right */}
+      {/* Middle: Owner / SLA */}
       <div className="case-card-owner-block">
         <div className="case-card-owner-left">
           <div className="case-card-owner-label">Owner / Team</div>
