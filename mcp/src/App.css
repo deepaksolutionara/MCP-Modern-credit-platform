@@ -906,7 +906,7 @@ mwq-page-header { display: flex; align-items: center; gap: 14px; }
 /* ── My Work Queue — page header ── */
 .mwq-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 14px;
@@ -958,16 +958,17 @@ mwq-page-header { display: flex; align-items: center; gap: 14px; }
 /* Tab bar — wraps to multiple rows, no scroll */
 .mwq-tabs-wrap { flex-wrap: wrap; }
 
-/* ── Case card — horizontal layout ── */
+/* ── Case card — horizontal layout, desktop ── */
 .wq-cc {
   background: #fff;
   border: 1px solid #e8edf4;
   border-radius: 8px;
-  padding: 10px 14px;
+  padding: 14px 18px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  gap: 24px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   transition: box-shadow 0.15s, border-color 0.15s;
 }
@@ -980,10 +981,9 @@ mwq-page-header { display: flex; align-items: center; gap: 14px; }
 .wq-cc-left {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  min-width: 160px;
+  gap: 8px;
 }
-.wq-cc-top { display: flex; align-items: center; gap: 6px; }
+.wq-cc-top { display: flex; align-items: center; gap: 10px; }
 .wq-cc-id { font-size: 11px; font-weight: 500; color: #64748b; }
 .wq-cc-badge {
   font-size: 9.5px;
@@ -996,12 +996,12 @@ mwq-page-header { display: flex; align-items: center; gap: 14px; }
 .wq-cc-meta { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #64748b; }
 .wq-cc-sep { color: #cbd5e1; }
 
-/* Status + owner stacked */
+/* Status + owner — stacked column */
 .wq-cc-status-col {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  min-width: 100px;
+  align-items: flex-start;
+  gap: 8px;
 }
 .wq-cc-status {
   font-size: 10px;
@@ -1012,18 +1012,25 @@ mwq-page-header { display: flex; align-items: center; gap: 14px; }
 }
 .wq-cc-owner-row { font-size: 11px; color: #64748b; white-space: nowrap; }
 
-/* SLA bar — constrained to roughly half its previous stretch */
+/* End wrapper: transparent on desktop — children join card's flex row directly */
+.wq-cc-end {
+  display: contents;
+}
+
+/* Center: SLA bar — constrained width */
 .wq-cc-sla-col {
   flex: 1;
-  max-width: 200px;
+  max-width: 220px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  align-items: flex-start;
+  gap: 6px;
 }
 .wq-cc-sla-bar-row {
   display: flex;
   align-items: center;
   gap: 6px;
+  width: 100%;
 }
 .wq-cc-clock { color: #94a3b8; flex-shrink: 0; }
 .wq-cc-sla-bar-bg {
@@ -1035,24 +1042,18 @@ mwq-page-header { display: flex; align-items: center; gap: 14px; }
   overflow: hidden;
 }
 .wq-cc-sla-bar { height: 100%; border-radius: 999px; transition: width 0.3s; }
+.wq-cc-breach-txt { font-size: 10.5px; font-weight: 700; color: #dc2626; white-space: nowrap; }
+.wq-cc-sla-time   { font-size: 10px; font-weight: 600; white-space: nowrap; }
 
-/* Right: breach/time + created stacked */
+/* Far right: arrow + created */
 .wq-cc-right {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 3px;
-  min-width: 100px;
+  gap: 4px;
+  flex-shrink: 0;
 }
-.wq-cc-breach-txt { font-size: 10.5px; font-weight: 700; color: #dc2626; white-space: nowrap; }
-.wq-cc-sla-time   { font-size: 10px; font-weight: 600; white-space: nowrap; }
-.wq-cc-created {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  font-size: 10px;
-  color: #94a3b8;
-}
+.wq-cc-created { font-size: 10px; color: #94a3b8; white-space: nowrap; }
 .wq-cc-arrow { color: #94a3b8; }
 
 /* ============================================================
@@ -1420,6 +1421,11 @@ mwq-page-header { display: flex; align-items: center; gap: 14px; }
 @media (max-width: 640px) {
   .nba-tabbar { flex-wrap: wrap; width: 100%; }
   .nba-tab    { flex: 1 0 calc(50% - 4px); }
+  .ho-report-link {width: 25vw;}
+}
+
+@media (max-width: 480px) {
+  .ho-report-link { width: 30vw; }
 }
 
 
@@ -3997,16 +4003,17 @@ mwq-page-header { display: flex; align-items: center; gap: 14px; }
 .ho-row-focus td { background: #dbeafe !important; border-left: 3px solid #2563eb; }
 
 /* ── Held Orders responsive page header ── */
-.ho-page-header  { margin-bottom: 16px; }
+.ho-page-header  { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.ho-header-text  { display: flex; flex-direction: column; gap: 4px; }
 .ho-title {
   font-size: 24px; font-weight: 700; color: #0f172a;
-  letter-spacing: -0.3px; margin: 0 0 8px;
+  letter-spacing: -0.3px; margin: 0;
 }
-.ho-subtitle-row { display: flex; align-items: flex-start; gap: 10px; }
 .ho-header-icon  {
   background: #eff6ff; border-radius: 8px;
   width: 32px; height: 32px; min-width: 32px;
   display: flex; align-items: center; justify-content: center;
+  align-self: center;
 }
 .ho-subtitle {
   font-size: 12.5px; color: #64748b; line-height: 1.6;
@@ -4015,15 +4022,17 @@ mwq-page-header { display: flex; align-items: center; gap: 14px; }
 .ho-report-link {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  font-size: 12.5px;
+  align-self: flex-start;
+  gap: 3px;
+  font-size: 10px;
   font-weight: 500;
   color: #0f172a;
   text-decoration: none;
   background: #f9fafb;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 6px 14px;
+  border-radius: 5px;
+  padding: 3px 5px;
+  white-space: nowrap;
   transition: background 0.12s, border-color 0.12s;
 }
 .ho-report-link:hover { background: #e2e8f0; border-color: #94a3b8; }
@@ -4149,7 +4158,7 @@ mwq-page-header { display: flex; align-items: center; gap: 14px; }
 }
 .ho-table thead tr {
   background: #f8fafc;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px  #e5e7eb;
 }
 .ho-table th {
   padding: 7px 8px;
@@ -4250,7 +4259,7 @@ mwq-page-header { display: flex; align-items: center; gap: 14px; }
 
 .cust-page-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 14px;
   margin-bottom: 20px;
 }
@@ -4310,7 +4319,6 @@ mwq-page-header { display: flex; align-items: center; gap: 14px; }
   font-size: 24px; font-weight: 700; color: #0f172a;
   letter-spacing: -0.3px; margin: 0;
 }
-.cust-subtitle-row  { display: flex; align-items: flex-start; gap: 10px; }
 .cust-header-icon   {
   background: #eff6ff; border-radius: 8px;
   width: 32px; height: 32px; min-width: 32px;
@@ -5914,6 +5922,34 @@ mwq-page-header { display: flex; align-items: center; gap: 14px; }
 
   /* Work Queue: tighten card grid on mobile */
   .wq-cases-grid { padding: 8px 0; gap: 8px; }
+
+  /* Work Queue: mobile — case info full-width, rest in a row below */
+  .wq-cc {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 12px 0;
+  }
+  .wq-cc-left {
+    flex: 0 0 100%;
+  }
+  .wq-cc-status-col {
+    flex: 0 0 auto;
+  }
+  /* End wrapper: column on mobile — indicator+breach above timestamp */
+  .wq-cc-end {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+  .wq-cc-sla-col {
+    max-width: none;
+    width: 180px;
+  }
+  .wq-cc-sla-bar-row {
+    width: 100%;
+  }
 
   /* Filter pills wrap */
   .rdc-filters,

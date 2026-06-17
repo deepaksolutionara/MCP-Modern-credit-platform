@@ -98,22 +98,20 @@ function CustomTag({ tag }) {
 function HeldOrdersHeader() {
   return (
     <header className="ho-page-header">
-      <h1 className="ho-title">Held Orders</h1>
-      <div className="ho-subtitle-row">
-        <div className="ho-header-icon" aria-hidden="true">
-          <Package size={18} color="#3b82f6" />
-        </div>
-        <div>
-          <p className="ho-subtitle">
-            Prioritized held-order queue with sales rep, document type, payment
-            terms, and lifecycle status. Tooltip-equivalent context: tile
-            drilldowns and the queue both show the same dataset.
-          </p>
-          <Link to="/credit-hold-report" className="ho-report-link">
-            <Download size={13} aria-hidden="true" />
-            Credit Hold Report
-          </Link>
-        </div>
+      <div className="ho-header-icon" aria-hidden="true">
+        <Package size={18} color="#3b82f6" />
+      </div>
+      <div className="ho-header-text">
+        <h1 className="ho-title">Held Orders</h1>
+        <p className="ho-subtitle">
+          Prioritized held-order queue with sales rep, document type, payment
+          terms, and lifecycle status. Tooltip-equivalent context: tile
+          drilldowns and the queue both show the same dataset.
+        </p>
+        <Link to="/credit-hold-report" className="ho-report-link">
+          <Download size={13} aria-hidden="true" />
+          Credit Hold Report
+        </Link>
       </div>
     </header>
   );

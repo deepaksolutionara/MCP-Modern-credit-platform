@@ -145,27 +145,30 @@ function CaseCard({ c }) {
         <div className="wq-cc-owner-row">Owner: {c.owner}</div>
       </div>
 
-      {/* SLA bar + breach/time below */}
-      <div className="wq-cc-sla-col">
-        <div className="wq-cc-sla-bar-row">
-          <Clock size={11} className="wq-cc-clock" aria-hidden="true" />
-          <div className="wq-cc-sla-bar-bg">
-            <div className="wq-cc-sla-bar" style={{ width: `${barPct}%`, background: barColor }} />
-          </div>
-        </div>
-        {isBreach ? (
-          <span className="wq-cc-breach-txt">{c.sla}</span>
-        ) : c.sla !== 'Released' && (
-          <span className="wq-cc-sla-time" style={{ color: barColor }}>{c.sla}</span>
-        )}
-      </div>
+      {/* End wrapper: row on desktop, column on mobile */}
+      <div className="wq-cc-end">
 
-      {/* Right: created */}
-      <div className="wq-cc-right">
-        <div className="wq-cc-created">
-          <ArrowUp size={10} className="wq-cc-arrow" aria-hidden="true" />
-          Created {c.created}
+        {/* Center: clock + SLA bar, breach/time below */}
+        <div className="wq-cc-sla-col">
+          <div className="wq-cc-sla-bar-row">
+            <Clock size={11} className="wq-cc-clock" aria-hidden="true" />
+            <div className="wq-cc-sla-bar-bg">
+              <div className="wq-cc-sla-bar" style={{ width: `${barPct}%`, background: barColor }} />
+            </div>
+          </div>
+          {isBreach ? (
+            <span className="wq-cc-breach-txt">{c.sla}</span>
+          ) : c.sla !== 'Released' && (
+            <span className="wq-cc-sla-time" style={{ color: barColor }}>{c.sla}</span>
+          )}
         </div>
+
+        {/* Far right: created */}
+        <div className="wq-cc-right">
+          <ArrowUp size={10} className="wq-cc-arrow" aria-hidden="true" />
+          <span className="wq-cc-created">Created {c.created}</span>
+        </div>
+
       </div>
     </div>
   );
@@ -196,6 +199,9 @@ export default function WorkQueue() {
 
       {/* ── Page header ── */}
       <div className="mwq-header">
+        <div className="mwq-header-icon">
+          <Inbox size={22} color="#3b82f6" />
+        </div>
         <div className="mwq-header-text">
           <h1 className="mwq-title">My Work Queue</h1>
           <p className="mwq-subtitle">
@@ -203,9 +209,6 @@ export default function WorkQueue() {
             by you across credit holds, reviews, disputes, collections, and JDE exceptions.
             Prioritised by SLA, exposure, risk, and revenue impact.
           </p>
-        </div>
-        <div className="mwq-header-icon">
-          <Inbox size={22} color="#3b82f6" />
         </div>
       </div>
 

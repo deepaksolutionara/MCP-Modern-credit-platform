@@ -178,17 +178,15 @@ function ResultsTable({ results, totalCount, page, totalPages, onPageChange }) {
 function CustomersHeader() {
   return (
     <header className="cust-page-header">
+      <div className="cust-header-icon" aria-hidden="true">
+        <Users size={18} color="#3b82f6" />
+      </div>
       <div className="cust-header-text">
         <h1 className="cust-title">Customers</h1>
-        <div className="cust-subtitle-row">
-          <div className="cust-header-icon" aria-hidden="true">
-            <Users size={18} color="#3b82f6" />
-          </div>
-          <p className="cust-subtitle">
-            Quick path: search by account number or name to reach the full
-            customer credit profile.
-          </p>
-        </div>
+        <p className="cust-subtitle">
+          Quick path: search by account number or name to reach the full
+          customer credit profile.
+        </p>
       </div>
     </header>
   );
